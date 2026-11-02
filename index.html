@@ -27,6 +27,7 @@
   --sky:#9fd6f5; --sun:#ffd25a; --cloud:#ffffff; --hill:#3a7322; --hillpath:#5f8160; --fence:#24553a; --fence2:#183c28;
   --court:#c8643c; --court2:#b4572f; --cline:#f7f2e6; --tree:#3f7d33; --tree2:#5a9a43; --trunk:#8a5a2b;
   --brick:#8a5444; --mortar:#a3a39c; --roof:#a3523f; --roof2:#6e1d14; --robot:#1c7045; --robot2:#3a9a63; --roboteye:#4ed7d4;
+  --arena:#1f4a6e; --arena2:#2d6290; --standbase:#21405f; --seat1:#3b6fa8; --seat2:#30608f; --roofbeam:#aab3ba; --roofdark:#6d767c; --hard:#3a7bc8; --hard2:#2f68ab; --hardout:#3f8a5a; --train:#3f8a36; --train2:#2b6125;
   --star-op:0; --glow-op:0;
   --f-display:"Pixelify Sans","Courier New",monospace;
   --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -42,6 +43,7 @@
   --sky:#151d42; --sun:#f1e6b8; --cloud:#5a6488; --hill:#244a1c; --hillpath:#3d5540; --fence:#163626; --fence2:#0e2418;
   --court:#8f4a31; --court2:#7c3f27; --cline:#d8d2c3; --tree:#2a5226; --tree2:#386a2e; --trunk:#5b4030;
   --brick:#5e3b31; --mortar:#6d6d68; --roof:#6e3a30; --roof2:#4a140e; --robot:#155536; --robot2:#24704a; --roboteye:#7ef0ff;
+  --arena:#12293f; --arena2:#1b3a58; --standbase:#14283d; --seat1:#26496f; --seat2:#1f3d5d; --roofbeam:#6d767c; --roofdark:#4a5257; --hard:#2a5a93; --hard2:#224b7c; --hardout:#2b6040; --train:#2f6e2a; --train2:#1f4f1c;
   --star-op:1; --glow-op:1;
   color-scheme:dark;
 }}
@@ -55,6 +57,7 @@
   --sky:#151d42; --sun:#f1e6b8; --cloud:#5a6488; --hill:#244a1c; --hillpath:#3d5540; --fence:#163626; --fence2:#0e2418;
   --court:#8f4a31; --court2:#7c3f27; --cline:#d8d2c3; --tree:#2a5226; --tree2:#386a2e; --trunk:#5b4030;
   --brick:#5e3b31; --mortar:#6d6d68; --roof:#6e3a30; --roof2:#4a140e; --robot:#155536; --robot2:#24704a; --roboteye:#7ef0ff;
+  --arena:#12293f; --arena2:#1b3a58; --standbase:#14283d; --seat1:#26496f; --seat2:#1f3d5d; --roofbeam:#6d767c; --roofdark:#4a5257; --hard:#2a5a93; --hard2:#224b7c; --hardout:#2b6040; --train:#2f6e2a; --train2:#1f4f1c;
   --star-op:1; --glow-op:1;
   color-scheme:dark;
 }
@@ -285,6 +288,33 @@ label.lbl,.lbl{font-weight:800;display:block;margin-bottom:6px}
 .check input{width:22px;height:22px;margin-top:2px;accent-color:var(--green);flex:none}
 .quiz .opts{margin-top:2px}
 .quiz .opt{font-size:1rem;min-height:46px;padding:10px 12px}
+/* Matchwahl, Pokale, Center Court */
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mode{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:3px;padding:12px;border:3px solid var(--line);color:#fff;background:var(--train);box-shadow:inset 0 -6px 0 var(--train2),3px 3px 0 var(--line);min-height:116px;min-width:0}
+.mode.slam{background:var(--tc);box-shadow:inset 0 -6px 0 var(--tc2),3px 3px 0 var(--line)}
+.mode .mt{font-family:var(--f-display);font-weight:700;font-size:1.1rem;line-height:1.15;hyphens:manual}
+.mode .md{font-size:.82rem;font-weight:800;line-height:1.3}
+.mode:active{transform:translate(2px,2px);box-shadow:inset 0 -3px 0 rgba(0,0,0,.25),1px 1px 0 var(--line)}
+.mode:focus-visible{outline:3px dashed var(--ink);outline-offset:3px}
+.cups{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cup{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px;border:3px solid var(--line);background:var(--chip);text-align:center;min-width:0}
+.cup.next{box-shadow:inset 0 0 0 3px var(--gold)}
+.cup.empty .cup-ico{opacity:.35;filter:grayscale(1)}
+.cup b{font-family:var(--f-display);font-weight:700;font-size:.74rem;line-height:1.1}
+.cup span{font-size:.72rem;font-weight:800;color:var(--muted);line-height:1.2}
+.cup-ico{width:40px;max-width:100%;height:auto;aspect-ratio:11/9;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.2))}
+.cup-big{width:132px;max-width:100%;height:auto;aspect-ratio:11/9;filter:drop-shadow(3px 3px 0 rgba(0,0,0,.25));animation:hop .9s ease-out}
+.trophy-win{align-items:center;text-align:center;gap:6px}
+.trophy-win .disp{font-size:1.3rem}
+.scene-switch{display:flex;justify-content:flex-end;margin-top:8px}
+.chip{all:unset;cursor:pointer;font-weight:800;font-size:.85rem;padding:4px 10px;border:3px solid var(--line);background:var(--panel);box-shadow:2px 2px 0 var(--line)}
+.chip:focus-visible{outline:3px dashed var(--accent);outline-offset:2px}
+.guest .tname{position:absolute;left:8px;top:8px;font-family:var(--f-display);font-size:.85rem;color:#fff;background:rgba(0,0,0,.35);padding:2px 8px}
+.opts.grid.words .opt{font-size:1.15rem;padding:12px 6px}
+.blimp{animation:blimp 52s linear infinite}
+@keyframes blimp{from{transform:translateX(-24px)}to{transform:translateX(172px)}}
+.firework>g{animation:fw 2.4s steps(1) infinite}
+@keyframes fw{0%,25%{opacity:0}26%,60%{opacity:1}61%,100%{opacity:0}}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -313,7 +343,7 @@ function weekKeys(){const d=new Date();d.setHours(12,0,0,0);const wd=(d.getDay()
 const KEY="lern-match-v1",OLD_KEY="fennek-lernoase-v1";let memStore=null,storeOk=true;
 function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):null;}catch(e){storeOk=false;return memStore;}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storeOk=false;memStore=JSON.parse(JSON.stringify(S));}}
-function blank(){return {v:1,name:"",aceName:"Ace",lobName:"Lobbi",sound:true,pitch:1.6,voice:"",newPerDay:5,len:"normal",balls:0,missions:{},days:{},m:{},en:{},de:{},hist:{},quiz:{},qn:0,setupDone:false,imported:false};}
+function blank(){return {v:1,name:"",aceName:"Ace",lobName:"Lobbi",sound:true,pitch:1.6,voice:"",newPerDay:5,len:"normal",balls:0,missions:{},days:{},m:{},en:{},de:{},hist:{},quiz:{},qn:0,eg:{},titles:{},slams:{},gsN:0,gsTotal:0,mk:2,enUnit:null,paused:null,setupDone:false,imported:false};}
 let S=Object.assign(blank(),load()||{});
 /* Lernstand aus Fenneks Lern-Oase: liegt auf derselben Webadresse, daher hier lesbar */
 function oldData(){try{const t=localStorage.getItem(OLD_KEY);if(!t)return null;const o=JSON.parse(t);return o&&typeof o==="object"?o:null;}catch(e){return null;}}
@@ -341,14 +371,19 @@ function spriteInner(map,pal,o){o=o||{};let body="",open="",closed="",ga="",gb="
   if(o.flame)MAPS.FLAME2.forEach((row,j)=>[...row].forEach((c,x)=>{if(c!==".")fb+=rc(x,11+j,pal[c]);}));
   return `${o.arms?`<g class="armA">${ga}</g><g class="armB">${gb}</g>`:""}${o.flame?`<g class="flA">${fa}</g><g class="flB">${fb}</g>`:""}${body}${o.blink?`<g class="eyes-open">${open}</g><g class="eyes-closed">${closed}</g>`:""}`;
 }
+const UHU=["..k............k..",".kBk..........kBk.",".kBBkkkkkkkkkkBBk.","kBbbbbbbbbbbbbbbbk","kbbwwwwbbbbwwwwbbk","kbwwwwwwbbwwwwwwbk","kbwwkkwwbbwwkkwwbk","kbwwkkwwoowwkkwwbk","kbbwwwwbbobbwwwwbk","kbbbbbbbbbbbbbbbbk","kBbbllllllllllbbBk","kBblllsllllsllblBk","kBbllllllsllllbbBk",".kBblllsllllllbBk.",".kBbbllllllllbbBk.","..kBbbbbbbbbbbBk..","...kkkkkkkkkkkk...","....oo.o..o.oo...."];
+const PAL_UHU={k:"#3a2414",B:"#7a5028",b:"#9a6a3a",w:"#ffffff",o:"#f2a33a",l:"#ead2a4",s:"#b8894c"};
+const PAL_W={k:"#0f2a1b",g:"#1c7045",E:"#4ed7d4",e:"#2a8a96",L:"#3a9a63"};
 const SPR={};
-function spr(k){if(!SPR[k]){SPR[k]=k==="ace"?spriteInner(MAPS.ACE,PAL_ACE,{blink:[8,9]}):k==="lob"?spriteInner(MAPS.LOBBI,PAL_LOB,{blink:[9,10],arms:true}):k==="jay"?spriteInner(MAPS.JAY,PAL_G):k==="bo"?spriteInner(MAPS.BO,PAL_G):spriteInner(MAPS.ROCKET,PAL_G,{flame:true});}return SPR[k];}
+function spr(k){if(!SPR[k]){SPR[k]=k==="ace"?spriteInner(MAPS.ACE,PAL_ACE,{blink:[8,9]}):k==="lob"?spriteInner(MAPS.LOBBI,PAL_LOB,{blink:[9,10],arms:true}):k==="jay"?spriteInner(MAPS.JAY,PAL_G):k==="bo"?spriteInner(MAPS.BO,PAL_G):k==="w"?px(WUERFLI,PAL_W,0,0):k==="uhu"?spriteInner(UHU,PAL_UHU):spriteInner(MAPS.ROCKET,PAL_G,{flame:true});}return SPR[k];}
 function aceSVG(cls,act){return `<svg class="${cls||"ch ace"}" ${act===false?"":'data-act="ace"'} viewBox="0 0 20 18" shape-rendering="crispEdges" role="img" aria-label="${esc(AN())}">${spr("ace")}</svg>`;}
 function lobSVG(cls,act){return `<svg class="${cls||"ch lobbi"}" ${act===false?"":'data-act="lob"'} viewBox="0 0 30 24" shape-rendering="crispEdges" role="img" aria-label="${esc(LN())}">${spr("lob")}</svg>`;}
 const GUESTS={
   m:{n:"Die Mathe-Rakete",bg:"#8ab8ff",vb:"0 0 30 15",k:"rocket",anim:"zoom"},
   e:{n:"Jay",bg:"#37bcc1",vb:"0 0 24 20",k:"jay",anim:"slide"},
-  d:{n:"Bo",bg:"#731a1a",vb:"0 0 24 19",k:"bo",anim:"drop"}
+  d:{n:"Bo",bg:"#731a1a",vb:"0 0 24 19",k:"bo",anim:"drop"},
+  w:{n:"Würfli",bg:"#f2d06b",vb:"0 0 9 10",k:"w",anim:"drop"},
+  u:{n:"Schiri Uhu",bg:"#7fb8e6",vb:"0 0 18 18",k:"uhu",anim:"slide"}
 };
 function guestSVG(s,cls){const g=GUESTS[s];return `<svg class="${cls||""}" viewBox="${g.vb}" shape-rendering="crispEdges" role="img" aria-label="${esc(g.n)}">${spr(g.k)}</svg>`;}
 function px(map,fills,ox,oy){let r="";map.forEach((row,y)=>[...row].forEach((c,x)=>{if(c!=="."&&fills[c])r+=`<rect x="${ox+x}" y="${oy+y}" width="1.04" height="1.04" fill="${fills[c]}"/>`;}));return r;}
@@ -408,12 +443,61 @@ function courtSVG(newIdx){
   <rect x="0" y="49" width="160" height="21" fill="var(--court)"/>${speck}${lines}
   ${layer("far")}
   ${layer("net")}
-  ${n>=1?`<g class="rally"><rect x="0" y="0" width="2" height="2" fill="#dceb2f"/></g>`:""}
+  ${n>=1?`<g class="rally" transform="translate(98 51)"><rect x="0" y="0" width="2" height="2" fill="#dceb2f"/></g>`:""}
   <g class="shot" id="shot"><rect x="0" y="0" width="2" height="2" fill="#dceb2f"/></g>
   ${layer("front")}
   </svg>`;
 }
-function sceneHTML(newIdx,hop){return `<div class="scene">${courtSVG(newIdx)}<div class="duospot">${lobSVG("ch lobbi"+(hop?" hop":""))}${aceSVG("ch ace"+(hop?" hop":""))}</div></div>`;}
+/* ---------- Ausbaustufe 2: der Center Court (ab dem 16. Match) ---------- */
+function standSVG(x,w,top){let r=`<rect x="${x}" y="${top}" width="${w}" height="${38-top}" fill="var(--standbase)"/>`;for(let y=top+1,i=0;y<37;y+=3,i++)r+=`<rect x="${x}" y="${y}" width="${w}" height="2" fill="${i%2?"var(--seat2)":"var(--seat1)"}"/>`;return r;}
+const STANDS=[[0,62,14],[98,62,14],[62,36,20]];
+function crowdSVG(){const C=["#f1c9a0","#e8b48a","#c68e63","#8d5a3b","#ffd25a","#e8213f","#ffffff","#2a6fb8","#ff7a78","#3f8a36","#c98ae0"];let a="",b="";
+  STANDS.forEach(([x,w,top])=>{for(let y=top+1;y<36;y+=3)for(let cx=x+1;cx<x+w-1;cx+=3){if((cx*7+y*13)%11>7)continue;const s=`<rect x="${cx}" y="${y-1}" width="2" height="2" fill="${C[(cx*3+y*5)%C.length]}"/>`;if((cx+y)%2)a+=s;else b+=s;}});
+  return `<g class="cheer tappable" data-act="fans2"><g>${a}</g><g>${b}</g></g>`;}
+function kidSVG(x,y){return `<rect x="${x}" y="${y}" width="2" height="2" fill="#f1c9a0"/><rect x="${x}" y="${y}" width="2" height="1" fill="#5a3a22"/><rect x="${x-1}" y="${y+2}" width="4" height="2" fill="#6a3fa0"/><rect x="${x}" y="${y+4}" width="1" height="1" fill="#1b1714"/><rect x="${x+1}" y="${y+4}" width="1" height="1" fill="#1b1714"/>`;}
+const FLAGS=[[["#1b1714","#dd0000","#ffce00"],0],[["#0055a4","#ffffff","#ef4135"],1],[["#009246","#ffffff","#ce2b37"],1],[["#ae1c28","#ffffff","#21468b"],0],[["#ef3340","#ffffff","#ef3340"],0],[["#169b62","#ffffff","#ff883e"],1]];
+const ARENA=[
+  {n:"die linke Tribüne",L:"stand",d:()=>standSVG(0,62,14)},
+  {n:"die rechte Tribüne",L:"stand",d:()=>standSVG(98,62,14)},
+  {n:"die Haupttribüne",L:"stand",d:()=>standSVG(62,36,20)},
+  {n:"jubelnde Fans",L:"crowd",d:()=>crowdSVG()},
+  {n:"eine Großleinwand",L:"top",d:()=>`<g class="tappable" data-act="leinwand"><rect x="70" y="17" width="2" height="4" fill="#3a3a3a"/><rect x="88" y="17" width="2" height="4" fill="#3a3a3a"/><rect x="64" y="3" width="32" height="15" fill="#1b1714"/><rect x="65" y="4" width="30" height="13" fill="#10251a"/>${px(BALL,{o:"#5c6a10",y:"#dceb2f",w:"#ffffff"},67,6)}${pxText("15:0",78,8,"#ffd25a")}</g>`},
+  {n:"ein Stadiondach",L:"roof",d:()=>`<g><rect x="0" y="0" width="160" height="2" fill="var(--roofbeam)"/><rect x="0" y="2" width="160" height="1" fill="var(--roofdark)"/>${[4,44,114,154].map(x=>`<rect x="${x}" y="3" width="2" height="11" fill="var(--roofbeam)"/>`).join("")}</g>`},
+  {n:"Länderflaggen",L:"roof2",d:()=>{let r="";[12,22,32,52,104,124,134,144].forEach((x,i)=>{const [c,v]=FLAGS[i%FLAGS.length];r+=`<g class="wave" style="animation-delay:${-(i%4)*.25}s"><rect x="${x}" y="3" width="1" height="7" fill="#5d666b"/>${c.map((col,j)=>v?`<rect x="${x+1+j}" y="3" width="1" height="3" fill="${col}"/>`:`<rect x="${x+1}" y="${3+j}" width="3" height="1" fill="${col}"/>`).join("")}</g>`;});return `<g>${r}</g>`;}},
+  {n:"eine Fernsehkamera",L:"mid",d:()=>`<g class="tappable" data-act="kamera"><rect x="103" y="34" width="12" height="2" fill="#5d666b"/><rect x="105" y="29" width="7" height="5" fill="#2b2f33"/><rect x="112" y="30" width="2" height="3" fill="#4fb3d9"/><rect x="106" y="30" width="1" height="1" fill="#e8213f" class="twinkle"/><rect x="101" y="27" width="16" height="11" fill="transparent"/></g>`},
+  {n:"Ballkinder",L:"court",d:()=>`<g class="tappable" data-act="kinder">${kidSVG(62,44)}${kidSVG(117,44)}<rect x="59" y="42" width="8" height="8" fill="transparent"/><rect x="114" y="42" width="8" height="8" fill="transparent"/></g>`},
+  {n:"ein Linienrichter",L:"court",d:()=>`<g class="tappable" data-act="linie"><rect x="128" y="40" width="3" height="3" fill="#f1c9a0"/><rect x="127" y="39" width="5" height="1" fill="#1d3b5c"/><rect x="127" y="43" width="5" height="4" fill="#1d3b5c"/><rect x="128" y="47" width="1" height="2" fill="#1b1714"/><rect x="130" y="47" width="1" height="2" fill="#1b1714"/><rect x="125" y="38" width="9" height="12" fill="transparent"/></g>`},
+  {n:"Spielerbänke",L:"front",d:()=>`<g><rect x="142" y="63" width="15" height="2" fill="#2a6fb8"/><rect x="143" y="65" width="1" height="3" fill="#1d3b5c"/><rect x="155" y="65" width="1" height="3" fill="#1d3b5c"/><rect x="144" y="62" width="3" height="1" fill="#ffffff"/><rect x="149" y="61" width="2" height="2" fill="#dceb2f"/><rect x="152" y="62" width="3" height="1" fill="#e8213f"/></g>`},
+  {n:"Blumenkästen",L:"wall",d:()=>{let r="";for(let x=60;x<122;x+=8)r+=`<rect x="${x}" y="46" width="6" height="2" fill="#2f6b2a"/><rect x="${x}" y="45" width="1" height="1" fill="#9b59d0"/><rect x="${x+2}" y="45" width="1" height="1" fill="#ffffff"/><rect x="${x+4}" y="45" width="1" height="1" fill="#9b59d0"/>`;return `<g class="tappable" data-act="blumen">${r}</g>`;}},
+  {n:"Scheinwerfer",L:"roof2",d:()=>`<g class="tappable" data-act="licht2"><path d="M30 6H36L60 49H6Z" fill="#fff6c8" fill-opacity=".18" style="opacity:var(--glow-op)"/><path d="M124 6H130L154 49H100Z" fill="#fff6c8" fill-opacity=".18" style="opacity:var(--glow-op)"/><rect x="29" y="3" width="8" height="3" fill="#c9cdd2"/><rect x="30" y="4" width="6" height="1" fill="#fff3b0"/><rect x="123" y="3" width="8" height="3" fill="#c9cdd2"/><rect x="124" y="4" width="6" height="1" fill="#fff3b0"/></g>`},
+  {n:"ein Ball-Luftschiff",L:"sky",d:()=>`<g class="blimp"><g class="tappable" data-act="blimp" transform="translate(0 4)"><rect x="2" y="1" width="16" height="4" fill="#d6dde3"/><rect x="4" y="0" width="12" height="6" fill="#d6dde3"/><rect x="0" y="2" width="2" height="2" fill="#aab3ba"/><rect x="8" y="1" width="4" height="4" fill="#dceb2f"/><rect x="9" y="2" width="1" height="2" fill="#ffffff"/><rect x="8" y="6" width="4" height="1" fill="#5d666b"/><rect x="-2" y="-2" width="22" height="10" fill="transparent"/></g></g>`},
+  {n:"ein Feuerwerk",L:"sky",d:()=>{const burst=(cx,cy,c,dl)=>`<g style="animation-delay:${dl}s">${[[0,-3],[0,3],[-3,0],[3,0],[-2,-2],[2,-2],[-2,2],[2,2]].map(([dx,dy])=>`<rect x="${cx+dx}" y="${cy+dy}" width="1" height="1" fill="${c}"/>`).join("")}<rect x="${cx}" y="${cy}" width="1" height="1" fill="#ffffff"/></g>`;return `<g class="firework">${burst(18,8,"#ffd25a",0)}${burst(56,6,"#ff7a78",-.8)}${burst(104,7,"#7ef0ff",-1.6)}${burst(140,9,"#c98ae0",-.4)}</g>`;}}
+];
+function arenaSVG(newIdx){
+  const n=Math.max(0,Math.min(missionCount()-COURT.length,ARENA.length));
+  const item=i=>`<g class="${i===newIdx?"item-new":""}">${ARENA[i].d()}</g>`;
+  const layer=L=>{let r="";for(let i=0;i<n;i++)if(ARENA[i].L===L)r+=item(i);return r;};
+  let stars="";[[8,6],[22,12],[40,5],[57,14],[72,7],[88,4],[104,12],[118,6],[66,20],[30,22],[126,22],[146,10]].forEach(([x,y])=>stars+=`<rect x="${x}" y="${y}" width="1" height="1" fill="#fff8d0"/>`);
+  let lines=`<rect x="56" y="51" width="68" height="1" fill="var(--cline)"/><rect x="89" y="50" width="1" height="1" fill="var(--cline)"/><rect x="52" y="54" width="76" height="1" fill="var(--cline)"/><rect x="89" y="54" width="1" height="3" fill="var(--cline)"/><rect x="39" y="64" width="102" height="1" fill="var(--cline)"/><rect x="89" y="61" width="1" height="3" fill="var(--cline)"/>`;
+  for(let y=51;y<70;y++){const d=(y-51)*1.3;lines+=`<rect x="${Math.round(56-d)}" y="${y}" width="1.04" height="1.04" fill="var(--cline)"/><rect x="${Math.round(123+d)}" y="${y}" width="1.04" height="1.04" fill="var(--cline)"/>`;}
+  return `<svg class="bg" viewBox="0 0 160 70" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges" aria-label="Dein Center Court mit ${n} von ${ARENA.length} Teilen">
+  <defs><pattern id="mesh" width="2" height="2" patternUnits="userSpaceOnUse"><rect width="1" height="1" fill="#1f241f"/><rect x="1" y="1" width="1" height="1" fill="#1f241f"/></pattern></defs>
+  <rect width="160" height="70" fill="var(--sky)"/><g style="opacity:var(--star-op)">${stars}</g>
+  ${layer("sky")}${layer("stand")}${layer("crowd")}${layer("roof")}${layer("roof2")}${layer("top")}${layer("mid")}
+  <rect x="0" y="38" width="160" height="11" fill="var(--arena)"/><rect x="0" y="38" width="160" height="1" fill="var(--arena2)"/>
+  ${layer("wall")}
+  <rect x="0" y="49" width="160" height="21" fill="var(--hardout)"/><path d="M56 51H124L147 70H33Z" fill="var(--hard)"/>${lines}
+  ${COURT[0].d()}
+  <g class="rally" transform="translate(98 51)"><rect x="0" y="0" width="2" height="2" fill="#dceb2f"/></g>
+  ${layer("court")}${layer("front")}
+  </svg>`;
+}
+function sceneHTML(newIdx,tour){
+  const n=missionCount();let arena=n>COURT.length&&UI.sceneView!=="club";
+  const has=newIdx!=null&&newIdx>=0;if(has)arena=newIdx>=COURT.length;
+  const style=tour?` style="--court:${tour.court};--court2:${tour.court2};--hard:${tour.court};--hard2:${tour.court2}"`:"";
+  return `<div class="scene"${style}>${arena?arenaSVG(has?newIdx-COURT.length:-1):courtSVG(has?newIdx:-1)}<div class="duospot">${lobSVG("ch lobbi")}${aceSVG("ch ace")}</div></div>`;
+}
 
 /* ---------- Töne und Effekte ---------- */
 let AC=null,typeT=null;
@@ -459,7 +543,11 @@ function checkEN(input,w){const c=core(input);if(!c)return "no";if(w.en.some(e=>
 function enState(id){return S.en[id]||null;}
 function wordsDue(){const t=today();return WORDS.filter(w=>{const s=enState(w.id);return s&&s.box<5&&s.due<=t;}).sort((a,b)=>enState(a.id).due<enState(b.id).due?-1:1);}
 /* Neue Wörter abwechselnd aus Schulbuch und Tennis-Englisch */
-function wordsNew(){const by={};WORDS.filter(w=>!enState(w.id)).forEach(w=>(by[w.u]=by[w.u]||[]).push(w));const lists=Object.keys(by).sort().map(k=>by[k]);const out=[];let i=0;while(lists.some(l=>l.length)){const l=lists[i%lists.length];if(l.length)out.push(l.shift());i++;}return out;}
+const SCHOOL_UNITS=((window.INHALTE&&INHALTE.englisch)||[]).map((u,i)=>[i,u.unit]).filter(([i,u])=>!/Tennis/.test(u));
+const TENNIS_U=((window.INHALTE&&INHALTE.englisch)||[]).findIndex(u=>/Tennis/.test(u.unit));
+function enUnitCur(){return S.enUnit!=null?S.enUnit:(SCHOOL_UNITS.length?SCHOOL_UNITS[SCHOOL_UNITS.length-1][0]:0);}
+/* Neue Wörter: zwei aus der aktuellen Unit, eins aus Tennis-Englisch, danach der Rest */
+function wordsNew(){const fresh=WORDS.filter(w=>!enState(w.id)),cu=enUnitCur();const a=fresh.filter(w=>w.u===cu),t=fresh.filter(w=>w.u===TENNIS_U&&w.u!==cu),rest=fresh.filter(w=>w.u!==cu&&w.u!==TENNIS_U);const out=[];while(a.length||t.length){if(a.length)out.push(a.shift());if(a.length)out.push(a.shift());if(t.length)out.push(t.shift());}return out.concat(rest);}
 function newToday(){const t=today();return WORDS.filter(w=>{const s=enState(w.id);return s&&s.first===t;}).length;}
 function enTasks(n){
   let list=wordsDue().slice(0,n);
@@ -480,6 +568,11 @@ function enUpdate(w,res){
   if(res==="ok"){st.ok++;st.box=Math.min(5,st.box+1);}else if(res==="no"){st.box=Math.max(0,Math.min(st.box,1)-1);st.miss=(st.miss||0)+1;}
   st.due=addDays(t,BOX_DAYS[st.box]);S.en[w.id]=st;
 }
+/* Englisch-Grammatik: Lückensätze */
+const EG=((window.INHALTE&&INHALTE.englischGrammatik)||[]).map(x=>({id:"g-"+x[0],s:x[0],o:x[1],a:x[2],tip:x[3]||""}));
+function egTasks(n){const st=id=>S.eg[id]||{ok:0,n:0,last:null};
+  const weak=shuffle(EG.filter(g=>S.eg[g.id]&&st(g.id).last===false)),unseen=shuffle(EG.filter(g=>!S.eg[g.id])),learn=shuffle(EG.filter(g=>S.eg[g.id]&&st(g.id).last!==false&&st(g.id).ok<2)),rest=shuffle(EG.filter(g=>st(g.id).ok>=2&&st(g.id).last!==false));
+  return weak.concat(unseen,learn,rest).slice(0,n).map(g=>({subj:"g",kind:"mc",item:g,o:g.o,a:g.a}));}
 
 /* ---------- Deutsch ---------- */
 const DE=[];(function(){
@@ -497,8 +590,9 @@ const DE=[];(function(){
   (D.gross||[]).forEach(([s,a,o,tip])=>DE.push({id:"gross-"+s,cat:"gross",kind:"gross",s,o,a:o.indexOf(a),tip:tip||"Nomen schreibt man groß. Probe: Kann man „der, die, das“ davorsetzen?"}));
   (D.wortart||[]).forEach(([w,a])=>{const o=["Nomen","Verb","Adjektiv"];DE.push({id:"wa-"+w,cat:"wortart",kind:"wortart",w,o,a:o.indexOf(a),tip:{Nomen:"Nomen sind Namen für Dinge, Lebewesen oder Gefühle. Man kann der, die, das davorsetzen.",Verb:"Verben sagen, was jemand tut. Man kann sie beugen: ich laufe, du läufst.",Adjektiv:"Adjektive sagen, wie etwas ist. Man kann sie steigern: schnell, schneller."}[a]});});
   (D.fehler||[]).forEach(([o,a,c])=>DE.push({id:"fe-"+a,cat:"fehler",kind:"fehler",o,a:o.indexOf(a),c,tip:"Richtig geschrieben: "+c}));
+  (D.extra||[]).forEach(([cat,q,o,a,tip])=>DE.push({id:"x-"+cat+"-"+q+"-"+o[a],cat,kind:"q",q,o,a,tip}));
 })();
-const DE_CAT={s:"s, ss oder ß",i:"i oder ie",doppel:"Doppelte Mitlaute",ck:"k oder ck",tz:"z oder tz",gross:"Groß und klein",wortart:"Wortarten",fehler:"Fehlerwörter"};
+const DE_CAT={s:"s, ss oder ß",i:"i oder ie",doppel:"Doppelte Mitlaute",ck:"k oder ck",tz:"z oder tz",gross:"Groß und klein",wortart:"Wortarten",fehler:"Fehlerwörter",zeitform:"Zeitformen",steigerung:"Steigern und vergleichen",satzglied:"Subjekt und Prädikat",satzzeichen:"Satzzeichen",rede:"Wörtliche Rede",pronomen:"Pronomen"};
 function deTasks(n){
   const st=id=>S.de[id]||{ok:0,n:0,last:null};
   const weak=shuffle(DE.filter(d=>{const s=st(d.id);return s.n>0&&s.last===false;}));
@@ -512,7 +606,7 @@ function deTasks(n){
 }
 
 /* ---------- Mathe: Aufgaben-Generatoren ---------- */
-const SKILLS={plus:"Plus im Kopf",minus:"Minus im Kopf",mal:"Mal rechnen",geteilt:"Geteilt rechnen",begriffe:"Fachbegriffe",ueberschlag:"Überschlagen",luecke:"Fehlende Zahl",mauer:"Zahlenmauer",probe:"Probe",schriftlich:"Schriftlich rechnen",text:"Textaufgaben"};
+const SKILLS={plus:"Plus im Kopf",minus:"Minus im Kopf",mal:"Mal rechnen",geteilt:"Geteilt rechnen",begriffe:"Fachbegriffe",ueberschlag:"Überschlagen",luecke:"Fehlende Zahl",mauer:"Zahlenmauer",probe:"Probe",schriftlich:"Schriftlich rechnen",text:"Textaufgaben",worte:"Aufgaben mit Worten",geschickt:"Geschickt rechnen",klammer:"Klammern und Punkt vor Strich",groessen:"Größen umrechnen",zeit:"Zeitspannen",schriftmal:"Schriftlich malnehmen",gtext:"Sachaufgaben mit Größen"};
 function lvl(k){return (S.m[k]&&S.m[k].lvl)||1;}
 const NAMES=[["Lena","sie"],["Emir","er"],["Mia","sie"],["Jonas","er"],["Elif","sie"],["Noah","er"],["Jay","er"]];
 function steps(a,b,op){if(b<10)return "";const t=Math.floor(b/10)*10,o=b%10;if(!o)return "";return op==="+"?`${a} + ${t} = ${a+t}, dann + ${o} = ${a+b}`:`${a} − ${t} = ${a-t}, dann − ${o} = ${a-b}`;}
@@ -566,48 +660,149 @@ const GEN={
       ()=>{const b=L===2?pickA([20,30,40,50,60]):R(21,49);return {t:`Das Tenniscamp dauert 5 Tage. Jeden Tag schlägt ${n} ${b} Aufschläge. Wie viele Aufschläge sind das in der ganzen Woche?`,a:5*b,u:"",ex:`5 · ${b} = ${5*b}`};},
       ()=>{const k=R(3,9);return {t:`Ein Tennisplatz ist ungefähr 24 Meter lang. ${n} läuft ${k}-mal von einer Grundlinie zur anderen. Wie viele Meter sind das?`,a:24*k,u:"m",ex:`${k} · 24 = ${k} · 20 + ${k} · 4 = ${20*k} + ${4*k} = ${24*k}`};}
     ];
-    const pool=L===1?T.slice(0,8):L===2?T.slice(0,10):T;const x=pickA(pool)();return {q:`<p class="q">${esc(x.t)}</p>`,raw:true,a:x.a,unit:x.u,expl:x.ex};}
+    const pool=L===1?T.slice(0,8):L===2?T.slice(0,10):T;const x=pickA(pool)();return {q:`<p class="q">${esc(x.t)}</p>`,raw:true,a:x.a,unit:x.u,expl:x.ex};},
+  /* Kapitel 2 und 5: Rechenaufträge in Worten */
+  worte(L){const mult=S.mk>=5&&Math.random()<.6;let a,b,t,ans,ex;
+    if(!mult){a=R(L===1?20:60,L===1?99:L===2?499:999);b=R(L===1?5:12,Math.min(a-3,L===1?60:L===2?299:899));
+      const f=pickA(["sum","add","plus","diff","sub","more","less"]);
+      if(f==="sum"){t=`Berechne die Summe von ${a} und ${b}.`;ans=a+b;ex=`Summe heißt Plus: ${a} + ${b} = ${a+b}`;}
+      else if(f==="add"){t=`Addiere ${b} zu ${a}.`;ans=a+b;ex=`Addieren heißt Plus: ${a} + ${b} = ${a+b}`;}
+      else if(f==="plus"){t=`Vermehre ${a} um ${b}.`;ans=a+b;ex=`Vermehren heißt dazurechnen: ${a} + ${b} = ${a+b}`;}
+      else if(f==="diff"){t=`Bilde die Differenz von ${a} und ${b}.`;ans=a-b;ex=`Differenz heißt Minus: ${a} − ${b} = ${a-b}`;}
+      else if(f==="sub"){t=`Subtrahiere ${b} von ${a}.`;ans=a-b;ex=`Achtung, Reihenfolge! „${b} von ${a}“ heißt: ${a} − ${b} = ${a-b}`;}
+      else if(f==="more"){t=`Um wie viel ist ${a} größer als ${b}?`;ans=a-b;ex=`Den Unterschied findest du mit Minus: ${a} − ${b} = ${a-b}`;}
+      else{t=`Vermindere ${a} um ${b}.`;ans=a-b;ex=`Vermindern heißt abziehen: ${a} − ${b} = ${a-b}`;}}
+    else{const x=R(3,9),y=R(L===1?3:6,L===3?25:12),p=x*y,f=pickA(["prod","mul","quot","div"]);
+      if(f==="prod"){t=`Berechne das Produkt von ${x} und ${y}.`;ans=p;ex=`Produkt heißt Mal: ${x} · ${y} = ${p}`;}
+      else if(f==="mul"){t=`Multipliziere ${y} mit ${x}.`;ans=p;ex=`Multiplizieren heißt Mal: ${y} · ${x} = ${p}`;}
+      else if(f==="quot"){t=`Berechne den Quotienten von ${p} und ${x}.`;ans=y;ex=`Quotient heißt Geteilt: ${p} : ${x} = ${y}`;}
+      else{t=`Dividiere ${p} durch ${x}.`;ans=y;ex=`Dividieren heißt Geteilt: ${p} : ${x} = ${y}`;}}
+    return {q:`<p class="q">${esc(t)}</p>`,raw:true,a:ans,expl:ex};},
+  /* Kapitel 2: Vertauschungs- und Verbindungsgesetz */
+  geschickt(L){const base=L===1?10:100;let q,ans,ex;
+    if(Math.random()<.7){const x=L===1?R(1,9):R(11,89),y=base-x,z=L===1?R(11,39):R(12,99);const nums=L===3?[x,z,y,R(11,99)]:[x,z,y];ans=nums.reduce((p,c)=>p+c,0);q=nums.join(" + ");
+      ex=`Vertauschen und zusammenfassen: (${x} + ${y}) + ${nums.filter((_,i)=>i!==0&&i!==2).join(" + ")} = ${base} + ${ans-base} = ${ans}`;}
+    else{const b=L===1?R(1,9):R(11,89),c=base-b,a=L===1?R(base+5,base+60):R(base+20,base+400);ans=a-base;q=`${a} − ${b} − ${c}`;ex=`Verbindungsgesetz: ${a} − (${b} + ${c}) = ${a} − ${base} = ${ans}`;}
+    return {q:`<p class="small muted">Rechne geschickt:</p><div class="q big">${q}</div>`,raw:true,a:ans,expl:ex};},
+  /* Kapitel 2: Klammern. Ab Kapitel 5 auch Punkt vor Strich */
+  klammer(L){const pv=S.mk>=5&&Math.random()<.65;let s,ans,ex;
+    if(!pv){const f=pickA(["a-(b-c)","a-(b+c)","(a-b)+c","a+(b-c)"]),big=L===1?60:L===2?150:400;
+      if(f==="a-(b-c)"){const c=R(5,30),b=c+R(5,40),a=R(b-c+5,b-c+big);s=`${a} − (${b} − ${c})`;ans=a-(b-c);ex=`Klammer zuerst: ${b} − ${c} = ${b-c}, dann ${a} − ${b-c} = ${ans}`;}
+      else if(f==="a-(b+c)"){const b=R(5,40),c=R(5,40),a=R(b+c+5,b+c+big);s=`${a} − (${b} + ${c})`;ans=a-b-c;ex=`Klammer zuerst: ${b} + ${c} = ${b+c}, dann ${a} − ${b+c} = ${ans}`;}
+      else if(f==="(a-b)+c"){const a=R(30,30+big),b=R(5,a-5),c=R(5,60);s=`(${a} − ${b}) + ${c}`;ans=a-b+c;ex=`Klammer zuerst: ${a} − ${b} = ${a-b}, dann ${a-b} + ${c} = ${ans}`;}
+      else{const b=R(20,90),c=R(5,b-5),a=R(10,big);s=`${a} + (${b} − ${c})`;ans=a+b-c;ex=`Klammer zuerst: ${b} − ${c} = ${b-c}, dann ${a} + ${b-c} = ${ans}`;}}
+    else{const f=pickA(["a+b*c","a*b-c","(a+b)*c","a-b:c","a*(b-c)"]);
+      if(f==="a+b*c"){const a=R(2,50),b=R(2,9),c=R(2,10);s=`${a} + ${b} · ${c}`;ans=a+b*c;ex=`Punkt vor Strich: ${b} · ${c} = ${b*c}, dann ${a} + ${b*c} = ${ans}`;}
+      else if(f==="a*b-c"){const a=R(2,9),b=R(2,10),c=R(1,a*b-1);s=`${a} · ${b} − ${c}`;ans=a*b-c;ex=`Punkt vor Strich: ${a} · ${b} = ${a*b}, dann ${a*b} − ${c} = ${ans}`;}
+      else if(f==="(a+b)*c"){const a=R(2,12),b=R(2,12),c=R(2,6);s=`(${a} + ${b}) · ${c}`;ans=(a+b)*c;ex=`Klammer zuerst: ${a} + ${b} = ${a+b}, dann ${a+b} · ${c} = ${ans}`;}
+      else if(f==="a-b:c"){const c=R(2,9),q=R(2,10),b=c*q,a=R(q+1,q+60);s=`${a} − ${b} : ${c}`;ans=a-q;ex=`Punkt vor Strich: ${b} : ${c} = ${q}, dann ${a} − ${q} = ${ans}`;}
+      else{const a=R(2,9),b=R(5,15),c=R(1,b-1);s=`${a} · (${b} − ${c})`;ans=a*(b-c);ex=`Klammer zuerst: ${b} − ${c} = ${b-c}, dann ${a} · ${b-c} = ${ans}`;}}
+    return {q:`<div class="q big">${s}</div>`,raw:true,a:ans,expl:ex};},
+  /* Kapitel 3: Größen umrechnen (immer ganze Zahlen als Ergebnis) */
+  groessen(L){const U=[["€","ct",100],["m","cm",100],["km","m",1000],["kg","g",1000],["h","min",60],["min","s",60],["t","kg",1000],["cm","mm",10]];
+    const [g,k,f]=pickA(L===1?U.slice(0,6):U);let q,ans,unit=k,ex;
+    if(L===1||(L===2&&Math.random()<.3)){const x=R(2,9);if(Math.random()<.35){q=`${fmt(x*f)} ${k}`;ans=x;unit=g;ex=`${fmt(f)} ${k} = 1 ${g}, also ${fmt(x*f)} ${k} = ${x} ${g}`;}else{q=`${x} ${g}`;ans=x*f;ex=`1 ${g} = ${fmt(f)} ${k}, also ${x} ${g} = ${fmt(x*f)} ${k}`;}}
+    else if(L===2||f===60){const x=R(1,9),y=f===60?pickA([5,10,15,20,25,30,40,45,50]):f===10?R(1,9):f===100?R(1,99):R(1,99)*10;q=`${x} ${g} ${y} ${k}`;ans=x*f+y;ex=`${x} ${g} = ${fmt(x*f)} ${k}, dazu ${y} ${k}: ${fmt(ans)} ${k}`;}
+    else{const x=R(1,9),y=f===10?R(1,9):f===100?R(1,99):R(1,999),dg=f===10?1:f===100?2:3;q=`${x},${String(y).padStart(dg,"0")} ${g}`;ans=x*f+y;ex=`Das Komma trennt ${g} und ${k}: ${q} = ${x} ${g} ${y} ${k} = ${fmt(ans)} ${k}`;}
+    return {q:`<p class="small muted">Rechne um:</p><div class="q big">${q} = ?</div>`,raw:true,a:ans,unit,expl:ex};},
+  /* Kapitel 3: Zeitspannen */
+  zeit(L){const h=R(8,17),m=pickA([0,5,10,15,20,25,30,35,40,45,50,55]),st=h*60+m;
+    const d=L===1?pickA([10,15,20,25,30,35,40,45]):L===2?R(5,22)*5:R(14,40)*5,en=st+d;
+    const tm=t=>`${Math.floor(t/60)}:${String(t%60).padStart(2,"0")} Uhr`;
+    const ctx=pickA(["Das Tennistraining","Das Match","Der Film","Die Busfahrt zum Turnier","Das Fußballspiel im Fernsehen"]);
+    const full=Math.ceil((st+1)/60)*60;const ex=en>full&&st%60!==0?`Bis ${tm(full)} sind es ${full-st} Minuten, dann noch ${en-full} Minuten bis ${tm(en)}. Zusammen ${d} Minuten.`:`Von ${tm(st)} bis ${tm(en)} sind es ${d} Minuten.`;
+    return {q:`<p class="q">${ctx} beginnt um ${tm(st)} und endet um ${tm(en)}. Wie viele Minuten dauert es?</p>`,raw:true,a:d,unit:"min",expl:ex};},
+  /* Kapitel 5: schriftlich multiplizieren */
+  schriftmal(L){let a,b;if(L===1){a=R(112,489);b=R(2,9);}else if(L===2){a=R(1012,4899);b=R(3,9);}else{a=R(23,89);b=R(12,49);if(b%10===0)b++;}
+    const res=a*b;let ex;
+    if(b<10){const parts=String(a).split("").map((c,i,arr)=>+c*Math.pow(10,arr.length-1-i)).filter(v=>v);ex=`Stelle für Stelle: ${parts.map(p=>fmt(p)+" · "+b).join(" + ")} = ${parts.map(p=>fmt(p*b)).join(" + ")} = ${fmt(res)}`;}
+    else{const z=Math.floor(b/10)*10,e=b%10;ex=`Zerlegen: ${a} · ${z} = ${fmt(a*z)} und ${a} · ${e} = ${fmt(a*e)}, zusammen ${fmt(res)}`;}
+    return {q:`<p class="q" style="text-align:center">Rechne schriftlich:</p><div class="q big">${a} · ${b}</div>`,raw:true,a:res,expl:ex};},
+  /* Kapitel 3: Sachaufgaben mit Größen */
+  gtext(L){const [n,p]=pickA(S.name?NAMES.concat([[S.name,"er"]]):NAMES);
+    const T=[
+      ()=>{const k=R(2,L===1?5:9);return {t:`Ein Tennisball wiegt ungefähr 57 g. Wie viel Gramm wiegen ${k} Bälle?`,a:57*k,u:"g",ex:`${k} · 57 = ${k*57}`};},
+      ()=>{const e1=R(2,9),c1=pickA([10,20,30,40,45,50,60,70,80,90,95]),e2=R(1,9),c2=pickA([10,15,20,30,50,75,90,95]);const a=e1*100+c1,b=e2*100+c2,s2=a+b;return {t:`${n} kauft ein Griffband für ${e1},${String(c1).padStart(2,"0")} € und eine Dose Bälle für ${e2},${String(c2).padStart(2,"0")} €. Wie viel Cent kostet das zusammen?`,a:s2,u:"ct",ex:`${a} ct + ${b} ct = ${s2} ct, das sind ${Math.floor(s2/100)},${String(s2%100).padStart(2,"0")} €`};},
+      ()=>({t:`Ein Tennisplatz ist 23,77 m lang. Wie viele Zentimeter sind das?`,a:2377,u:"cm",ex:`23 m = 2.300 cm, dazu 77 cm: 2.377 cm`}),
+      ()=>{const r=R(2,6),m=pickA([60,75,80,85,90,120]);return {t:`${n} läuft beim Aufwärmen ${r} Runden um den Platz. Eine Runde ist ${m} m lang. Wie viele Meter läuft ${p}?`,a:r*m,u:"m",ex:`${r} · ${m} = ${r*m}`};},
+      ()=>{const d=pickA([45,60,75,90]),k=R(2,5);return {t:`Das Training dauert jeden Tag ${d} Minuten. Wie viele Minuten sind das an ${k} Tagen?`,a:d*k,u:"min",ex:`${k} · ${d} = ${d*k}`};},
+      ()=>{const k=R(2,4);return {t:`Eine Trinkflasche hat 750 ml. ${n} trinkt beim Turnier ${k} Flaschen. Wie viele Milliliter sind das?`,a:750*k,u:"ml",ex:`${k} · 750 = ${750*k}`};},
+      ()=>{const tot=R(2,4)*1000+pickA([200,400,500,600,800]),g=R(3,9)*100;return {t:`Bis zum Tennisverein sind es ${Math.floor(tot/1000)} km ${tot%1000} m. ${n} ist schon ${g} m gefahren. Wie viele Meter fehlen noch?`,a:tot-g,u:"m",ex:`${Math.floor(tot/1000)} km ${tot%1000} m = ${fmt(tot)} m, dann ${fmt(tot)} − ${g} = ${fmt(tot-g)}`};}
+    ];
+    const x=pickA(T)();return {q:`<p class="q">${esc(x.t)}</p>`,raw:true,a:x.a,unit:x.u,expl:x.ex};}
 };
 function mTask(skill){const g=GEN[skill](lvl(skill));return Object.assign({subj:"m",kind:g.kind||"num",skill},g);}
-function mTasks(n){
+const BASIS=["plus","minus","mal","geteilt","begriffe","ueberschlag","luecke","mauer","probe","schriftlich","text"];
+/* Schulbuch-Kapitel (Dreifach Mathe 5). Die Eltern stellen das aktuelle Kapitel ein. */
+const KAP={2:{short:"2 · Plus und Minus",n:"Kapitel 2: Addieren und Subtrahieren",s:["worte","geschickt","klammer","schriftlich","ueberschlag","luecke","text"]},
+  3:{short:"3 · Größen",n:"Kapitel 3: Mit Größen rechnen",s:["groessen","zeit","gtext","groessen"]},
+  5:{short:"5 · Mal und Geteilt",n:"Kapitel 5: Multiplizieren und Dividieren",s:["worte","klammer","schriftmal","mal","geteilt","text"]}};
+function mTasks(n,mode){
   const acc=k=>{const s=S.m[k];return s&&s.n?s.ok/s.n:.6;};
-  const fixed=["plus","minus",pickA(["mal","geteilt"]),"text"];
-  const rest=Object.keys(SKILLS).filter(k=>!fixed.includes(k));
-  const chosen=fixed.slice(0,Math.min(4,n));
-  while(chosen.length<n){const w=rest.map(k=>({k,w:1.4-acc(k)+(chosen.includes(k)?-0.9:0)+Math.random()*.6})).sort((a,b)=>b.w-a.w);chosen.push(w[0].k);}
+  const ks=(KAP[S.mk]||KAP[2]).s;let chosen,pool;
+  if(mode==="kapitel"){chosen=shuffle([...new Set(ks)]).slice(0,Math.min(n,4));pool=ks;}
+  else if(mode==="basis"){chosen=["plus","minus",pickA(["mal","geteilt"]),"text"];pool=BASIS;}
+  else{chosen=["plus","minus",pickA(["mal","geteilt"]),pickA(ks),pickA(ks)];pool=BASIS.concat(ks);}
+  chosen=chosen.slice(0,n);const uniq=[...new Set(pool)];
+  while(chosen.length<n){const w=uniq.map(k=>({k,w:1.4-acc(k)-chosen.filter(c=>c===k).length*.9+Math.random()*.6})).sort((a,b)=>b.w-a.w);chosen.push(w[0].k);}
   return shuffle(chosen).map(mTask);
 }
 function mUpdate(skill,ok){const s=S.m[skill]||{lvl:1,run:0,ok:0,n:0};s.n++;if(ok){s.ok++;s.run=Math.max(s.run,0)+1;if(s.run>=3&&s.lvl<3){s.lvl++;s.run=0;UI.levelUp=SKILLS[skill];}}else{s.run=Math.min(s.run,0)-1;if(s.run<=-2&&s.lvl>1){s.lvl--;s.run=0;}}S.m[skill]=s;}
 
 /* ---------- Ablauf ---------- */
-const UI={view:"home",lastKey:"",run:null};
-const SUBJ={m:{n:"Mathe",em:"🔢",c:"var(--math)",set:1},e:{n:"Englisch",em:"🇬🇧",c:"var(--eng)",set:2},d:{n:"Deutsch",em:"✏️",c:"var(--deu)",set:3}};
+const UI={view:"home",lastKey:"",run:null,sceneView:null};
+const SUBJ={m:{n:"Mathe",em:"🔢",c:"var(--math)"},e:{n:"Englisch",em:"🇬🇧",c:"var(--eng)"},d:{n:"Deutsch",em:"✏️",c:"var(--deu)"},g:{n:"Grammatik",em:"💬",c:"var(--eng)"},k:{n:"Mathe-Kapitel",em:"📐",c:"var(--math)"}};
 const PT=["0","15","30","40"];
 const PRAISE=["Super, danke!","Wow, du bist ein echtes Ass!","Volltreffer!","Guter Schlag!","Klasse!","Punkt für dich!","Stark gespielt!","Genau so!"];
 const PRAISE_EN=["Nice shot!","Great!","Well done!","Awesome!","Yes! Good job!"];
 const ASK=["Hmm, wieso denn? Erklär's mir, "+"{A}"+"!","Aus! Macht nix. {A}, wie geht das?","Knapp daneben. {A}, warum ist das so?","Oh! Das will ich jetzt auch wissen, {A}."];
 function sizes(){return S.len==="kurz"?{m:5,e:6,d:4}:{m:8,e:8,d:6};}
-function startRun(type){
-  const sz=sizes();let tasks=[];
-  if(type==="mission")tasks=[{intro:"m"}].concat(mTasks(sz.m),[{intro:"e"}],enTasks(sz.e),[{intro:"d"}],deTasks(sz.d));
-  else if(type==="m")tasks=mTasks(8);else if(type==="e")tasks=enTasks(8);else tasks=deTasks(8);
-  const sc=()=>({p:0,g:0,ok:0,n:0});
-  UI.run={type,tasks,i:0,res:[],earned:0,requeued:{},score:{m:sc(),e:sc(),d:sc()},rally:0};UI.view="task";UI.input="";UI.answered=null;
-  render();snd("tap");
-  const t=cur();if(t&&t.intro==="e")setTimeout(()=>speak("Hey! I'm Jay. Let's play!",Math.max(.9,(S.pitch||1.6)-.6)),500);
+/* Grand-Slam-Turniere: jedes gewonnene Grand-Slam-Match bringt den Pokal des Turniers, danach geht es zum nächsten */
+const TOURN=[
+  {k:"ao",n:"Australian Open",bei:"die Australian Open",short:"Melbourne",ort:"Melbourne",belag:"blauem Hartplatz",court:"#3a7bc8",court2:"#2f68ab",fakt:"Dort ist im Januar Hochsommer. Manchmal wird es über 40 Grad heiß!"},
+  {k:"fo",n:"French Open",bei:"die French Open",short:"Paris",ort:"Paris",belag:"rotem Sand",court:"#c8643c",court2:"#b4572f",fakt:"Das Turnier heißt auch Roland Garros, nach einem berühmten französischen Flieger."},
+  {k:"wi",n:"Wimbledon",bei:"Wimbledon",short:"London",ort:"London",belag:"Rasen",court:"#4f9a3a",court2:"#45893a",fakt:"Alle Spieler tragen Weiß, und die Zuschauer essen gern Erdbeeren mit Sahne."},
+  {k:"us",n:"US Open",bei:"die US Open",short:"New York",ort:"New York",belag:"blauem Hartplatz",court:"#3567b0",court2:"#2b5796",fakt:"In New York wird oft bis spät in die Nacht unter Flutlicht gespielt."}
+];
+function curTour(){return TOURN[(S.gsN||0)%TOURN.length];}
+const TROPHY=["g.ggggggg.g","g.gHggggd.g","gggHggggddg","...gggggd..","....ggd....","....ggd....","...bbbbb...","..bbbbbbb..","..bbbbbbb.."];
+function trophySVG(T,big){return `<svg class="${big?"cup-big":"cup-ico"}" viewBox="0 0 11 9" shape-rendering="crispEdges" aria-hidden="true">${px(TROPHY,{g:"#f2c04a",H:"#fff3b0",d:"#d99a14",b:T.court},0,0)}</svg>`;}
+function setPlan(type){
+  if(type==="mission")return [{s:"m",g:"m"},{s:"e",g:"e"},{s:"d",g:"d"}];
+  if(type==="slam")return [{s:"m",g:"m"},{s:"e",g:"e"},{s:"d",g:"d"},{s:"g",g:"w"},{s:"k",g:"u"}];
+  return [{s:type,g:null}];
 }
+function setTasks(type,s){
+  const sz=sizes();
+  if(type==="slam")return {m:()=>mTasks(8,"basis"),e:()=>enTasks(10),d:()=>deTasks(8),g:()=>egTasks(7),k:()=>mTasks(7,"kapitel")}[s]();
+  if(type==="mission")return {m:()=>mTasks(sz.m,"mix"),e:()=>shuffle(enTasks(sz.e-2).concat(egTasks(2))),d:()=>deTasks(sz.d)}[s]();
+  return {m:()=>mTasks(8,"mix"),e:()=>shuffle(enTasks(6).concat(egTasks(2))),d:()=>deTasks(8)}[s]();
+}
+function startRun(type){
+  const sets=setPlan(type);let tasks=[];
+  sets.forEach((st,i)=>{if(st.g)tasks.push({intro:true,set:i});tasks=tasks.concat(setTasks(type,st.s).map(t=>Object.assign(t,{set:i})));});
+  const sc=()=>({p:0,g:0,ok:0,n:0});
+  UI.run={type,sets,tasks,i:0,res:[],earned:0,requeued:{},score:sets.map(sc),rally:0,tour:type==="slam"?curTour():null};UI.view="task";UI.input="";UI.answered=null;
+  keepRun();render();snd("tap");introVoice();
+}
+/* Ein laufendes Match wird mitgespeichert. Wird die App geschlossen, kann Philip am selben Tag weiterspielen. */
+function keepRun(){const r=UI.run;if(!r||(r.type!=="mission"&&r.type!=="slam"))return;S.paused={d:today(),run:r};save();}
+function pausedRun(){return S.paused&&S.paused.d===today()&&S.paused.run&&S.paused.run.tasks?S.paused:null;}
+function introVoice(){const r=UI.run,t=cur();if(!t||!t.intro)return;const st=r.sets[t.set];if(st.g!=="e")return;const L=introLines(r,t.set).find(l=>l[0]==="guest");if(L)setTimeout(()=>speak(L[1],Math.max(.9,(S.pitch||1.6)-.6)),500);}
 function cur(){return UI.run&&UI.run.tasks[UI.run.i];}
 function hist(subj,ok){const t=today();const h=S.hist[t]||(S.hist[t]={m:[0,0],e:[0,0],d:[0,0]});h[subj][1]++;if(ok)h[subj][0]++;}
+function egSentence(g){return g.s.split("→").pop().replace("___",g.o[g.a]).trim();}
 function answer(val,ev){
   const t=cur();if(!t||UI.answered)return;let res;
   if(t.subj==="m"){const ok=t.kind==="mc"?val===t.a:Number(val)===t.a;res=ok?"ok":"no";mUpdate(t.skill,ok);}
   else if(t.subj==="e"){res=t.kind==="mc"?(val===t.a?"ok":"no"):checkEN(val,t.w);if(!t.again)enUpdate(t.w,res);
-    if(res==="no"&&!UI.run.requeued[t.w.id]){UI.run.requeued[t.w.id]=1;const ins=UI.run.tasks.findIndex((x,i)=>i>UI.run.i&&x.intro);const copy=Object.assign({},enTask(t.w),{again:true});if(ins<0)UI.run.tasks.push(copy);else UI.run.tasks.splice(ins,0,copy);}}
+    if(res==="no"&&!UI.run.requeued[t.w.id]){UI.run.requeued[t.w.id]=1;const ins=UI.run.tasks.findIndex((x,i)=>i>UI.run.i&&x.intro);const copy=Object.assign({},enTask(t.w),{again:true,set:t.set});if(ins<0)UI.run.tasks.push(copy);else UI.run.tasks.splice(ins,0,copy);}}
+  else if(t.subj==="g"){const ok=val===t.a;res=ok?"ok":"no";const s=S.eg[t.item.id]||{ok:0,n:0};s.n++;if(ok)s.ok++;s.last=ok;S.eg[t.item.id]=s;}
   else{const ok=val===t.a;res=ok?"ok":"no";const s=S.de[t.item.id]||{ok:0,n:0};s.n++;if(ok)s.ok++;s.last=ok;S.de[t.item.id]=s;}
-  const r=UI.run,sc=r.score[t.subj];sc.n++;UI.gameWon=false;UI.rallyBonus=0;
+  const r=UI.run,sc=r.score[t.set];sc.n++;UI.gameWon=false;UI.rallyBonus=0;
   /* Tennis-Zählweise: richtige Antwort = Punkt, vier Punkte = Spiel. Ein Fehler kostet nichts. */
   if(res!=="no"){sc.ok++;sc.p++;if(sc.p>=4){sc.p=0;sc.g++;UI.gameWon=true;}r.rally++;if(r.rally%5===0)UI.rallyBonus=5;}else r.rally=0;
-  UI.answered={res,val};r.res[r.i]=res;hist(t.subj,res!=="no");
+  UI.answered={res,val};r.res[r.i]=res;hist(t.subj==="g"?"e":t.subj,res!=="no");
   const pts=(res==="ok"?3:res==="near"?2:1)+UI.rallyBonus;r.earned+=pts;S.balls+=pts;save();
   snd(res==="no"?"wrong":"right");
   render();
@@ -616,18 +811,21 @@ function answer(val,ev){
   else if(UI.rallyBonus){const txt="Ballwechsel × "+r.rally;setTimeout(()=>banner(txt),350);}
   fx($(".line .av.lobbi"),res==="no"?"shake":"hop");
   if(t.subj==="e")setTimeout(()=>speak(t.w.en[0]),UI.gameWon?1100:350);
+  if(t.subj==="g")setTimeout(()=>speak(egSentence(t.item)),UI.gameWon?1100:350);
 }
 function next(){
   const r=UI.run;r.i++;UI.input="";UI.answered=null;
   if(r.i>=r.tasks.length){finish();return;}
-  UI.anim=true;render();window.scrollTo(0,0);snd("pock");
-  const t=cur();if(t&&t.intro==="e")setTimeout(()=>speak("Hey! I'm Jay. Let's play!",Math.max(.9,(S.pitch||1.6)-.6)),500);
+  keepRun();UI.anim=true;render();window.scrollTo(0,0);snd("pock");introVoice();
 }
 function finish(){
   const r=UI.run;const t=today();let newItem=-1;
-  if(r.type==="mission"){if(!S.missions[t]){S.missions[t]=true;newItem=missionCount()-1;S.balls+=10;r.earned+=10;}S.days[t]=true;
-    const wk=weekKeys().filter(k=>S.days[k]).length,wkey="week-"+weekKeys()[0];if(wk>=5&&!S[wkey]){S[wkey]=true;S.balls+=25;r.earned+=25;r.weekBonus=true;}}
-  save();UI.view="done";UI.done={newItem:newItem>=0&&newItem<COURT.length?newItem:-1};render();
+  if(r.type==="mission"||r.type==="slam"){
+    if(!S.missions[t]){S.missions[t]=true;newItem=missionCount()-1;S.balls+=10;r.earned+=10;}S.days[t]=true;
+    const wk=weekKeys().filter(k=>S.days[k]).length,wkey="week-"+weekKeys()[0];if(wk>=5&&!S[wkey]){S[wkey]=true;S.balls+=25;r.earned+=25;r.weekBonus=true;}
+    if(r.type==="slam"){S.gsTotal=(S.gsTotal||0)+1;if(!S.slams[t]){const T=r.tour;S.slams[t]=T.k;S.titles[T.k]=(S.titles[T.k]||0)+1;S.gsN=(S.gsN||0)+1;S.balls+=25;r.earned+=25;r.title=true;}}
+    S.paused=null;}
+  save();UI.view="done";UI.done={newItem:newItem>=0&&newItem<COURT.length+ARENA.length?newItem:-1};render();
   snd("fanfare");rain();document.querySelectorAll(".scene .ch").forEach(c=>fx(c,"hop"));
 }
 
@@ -640,9 +838,13 @@ const LOB_TALK=[
   ["Und warum heiße ich {L}?","Ein Lob ist ein hoher Ball, der über den Gegner drüberfliegt. Und du hüpfst ja auch immer so hoch!"],
   ["Ist Tennis eigentlich gut fürs Lernen?","Bewegung tut dem Gehirn gut. Nach dem Training lernt es sich oft richtig gut."],
   ["Wie viel wiegt eigentlich ein Tennisball?","Ungefähr 57 Gramm. Das ist ungefähr so viel wie ein Hühnerei."],
-  ["{A}, was heißt Tennisschläger auf Englisch?","Racket! Und das Netz heißt net."]
+  ["{A}, was heißt Tennisschläger auf Englisch?","Racket! Und das Netz heißt net."],
+  ["Was ist eigentlich ein Grand Slam?","Die vier größten Turniere der Welt: in Melbourne, Paris, London und New York. Für jedes gewonnene Grand-Slam-Match gibt's einen Pokal!"],
+  ["Was macht eigentlich Schiri Uhu?","Er sitzt auf dem hohen Stuhl und passt auf, dass alle fair spielen. Eulen sehen nämlich richtig gut."],
+  ["Warum wechselt man eigentlich die Seiten?","Damit keiner die ganze Zeit Sonne oder Wind gegen sich hat."],
+  ["{A}, auf welchem Belag spielst du am liebsten?","Rasen! Auf Sand werde ich immer so staubig."]
 ];
-const ACE_FACT=["Auf Rasen springen Tennisbälle flacher ab als auf Sand.","Bei großen Turnieren bekommen die Spieler alle paar Spiele neue Bälle.","Linkshänder schlagen den Ball mit anderem Drall. Das macht es für Gegner oft schwierig.","Beim Doppel spielen zwei gegen zwei. Dann ist das Feld an den Seiten breiter.","Wer aufschlägt, sagt seinen Spielstand zuerst an."];
+const ACE_FACT=["Auf Rasen springen Tennisbälle flacher ab als auf Sand.","Bei großen Turnieren bekommen die Spieler alle paar Spiele neue Bälle.","Linkshänder schlagen den Ball mit anderem Drall. Das macht es für Gegner oft schwierig.","Beim Doppel spielen zwei gegen zwei. Dann ist das Feld an den Seiten breiter.","Wer aufschlägt, sagt seinen Spielstand zuerst an.","Ein Grand-Slam-Match bei den Männern geht über bis zu fünf Sätze. Manche dauern länger als fünf Stunden!"];
 const SCENE_TALK={
   sun:["Puh, ist das warm heute!","Sonne heißt auf Englisch sun. Trink genug beim Training!"],
   rocket:["Wow, das Raketenauto! Darf ich mal mitfahren?","Das hast du erfunden! Und das M steht heute für Mathe."],
@@ -657,17 +859,29 @@ const SCENE_TALK={
   fahne:["Da sind ja wir auf der Fahne!","Unsere Team-Fahne. Team {N}!"],
   pokal:["Ist der Pokal etwa für mich?","Für {N}! Fünf Matches in einer Woche bringen 25 Bonus-Bälle."],
   fans:["Die jubeln ja für dich!","Applaus für {N}!"],
-  wuerfli:["Würfli spuckt Bälle!","Würfli ist eine Ballmaschine. So kann man auch ohne Partner trainieren."]
+  wuerfli:["Würfli spuckt Bälle!","Würfli ist eine Ballmaschine. So kann man auch ohne Partner trainieren."],
+  fans2:["So viele Leute!","Das ganze Stadion jubelt für {N}!"],
+  leinwand:["Da oben sind wir ja riesengroß!","Auf der Großleinwand sehen alle Zuschauer den Spielstand und die Zeitlupe."],
+  kamera:["Werden wir jetzt im Fernsehen gezeigt?","Ja! Große Turniere sieht man auf der ganzen Welt im Fernsehen."],
+  kinder:["Was machen die Kinder da?","Das sind Ballkinder. Sie sammeln die Bälle ein, ganz schnell und leise."],
+  linie:["Wer steht da so streng?","Ein Linienrichter. Er ruft „Out!“, wenn der Ball im Aus ist."],
+  blumen:["Schöne Blumen! Lila und grün?","Das sind die Farben von Wimbledon."],
+  licht2:["Wird es schon dunkel?","Mit den Scheinwerfern kann man bis spät in die Nacht spielen."],
+  blimp:["Ein Luftschiff mit einem Tennisball drauf!","Von dort oben filmt eine Kamera das ganze Stadion."]
 };
 function fill(s){return String(s).replace(/\{A\}/g,AN()).replace(/\{L\}/g,LN()).replace(/\{N\}/g,S.name||"dich");}
-function nextItem(){const n=missionCount();return n<COURT.length?COURT[n].n:"eine Überraschung";}
+function pieceName(i){return i<COURT.length?COURT[i].n:i<COURT.length+ARENA.length?ARENA[i-COURT.length].n:"eine Überraschung";}
+function nextItem(){return pieceName(missionCount());}
 function homeLines(){
   const t=today(),done=!!S.missions[t],n=missionCount(),nm=S.name?" "+S.name:"",h=new Date().getHours();
   if(UI.justImported){const j=UI.justImported;return ["Wir haben deine Sachen aus der Lern-Oase mitgebracht!",`${j.words} Vokabeln, deine Mathe-Stufen und ${j.days} Trainingstage. Deine ${j.balls} Datteln haben wir in Bälle umgetauscht.`];}
-  if(done)return [`Juhu, heute schon gewonnen${nm}!`,`Morgen gibt's ${nextItem()} für deinen Platz. Freies Training geht immer.`];
+  if(pausedRun())return [`Da bist du ja wieder${nm}! Unser Match ist noch nicht fertig.`,"Tipp auf „Weiterspielen“, dann geht es genau da weiter, wo du aufgehört hast."];
+  if(done)return [`Juhu, heute schon gewonnen${nm}!`,`Morgen gibt's ${nextItem()} für deinen Platz. Ein weiteres Match bringt trotzdem Bälle.`];
   if(n===0)return [`Hi${nm}! Ich bin ${LN()}, und das ist ${AN()}. Spielst du mit uns ein Lern-Match?`,"Jedes Match bringt ein neues Teil für deinen Tennisplatz. Als Erstes gibt's ein Netz!"];
   const greet=h<11?"Guten Morgen":h<17?"Hallo":"Guten Abend";
-  return [`${greet}${nm}! Kommst du gerade vom Training? Ich hab schon Fragen gesammelt!`,`Heute gibt's ${nextItem()} für deinen Platz.`];
+  if(n===COURT.length)return [`${greet}${nm}! Dein Clubplatz ist fertig!`,"Jetzt bauen wir zusammen einen Center Court mit Tribünen. Als Erstes kommt die linke Tribüne."];
+  const L=["Wie war's in der Schule? Ich hab schon Fragen gesammelt!","Ich hab heute Aufschläge geübt. Hilfst du mir wieder?","Bereit für ein Match? Ich bin schon ganz hüpfig!"];
+  return [`${greet}${nm}! ${L[new Date().getDate()%L.length]}`,`Heute gibt's ${nextItem()} für deinen Platz. Kurzes Training oder großes Grand-Slam-Match?`];
 }
 
 /* ---------- Ansichten ---------- */
@@ -702,62 +916,89 @@ function quizHTML(){
    ${A?lineHTML("ace",`<b class="big">${st.pick===q[2]?"Richtig!":"Richtig ist: "+esc(q[1][q[2]])}</b><span class="ex">${esc(q[3])}</span>`,{html:true,res:st.pick===q[2]?"ok":"no"}):`<p class="small muted">Tipp eine Antwort an. Die erste Antwort des Tages bringt 2 Bälle.</p>`}
   </section>`;
 }
+function cupsHTML(){const T=curTour();
+  return `<section class="panel stack" aria-label="Pokalvitrine"><h2>Deine Grand-Slam-Pokale</h2>
+   <div class="cups">${TOURN.map(x=>{const c=S.titles[x.k]||0;return `<div class="cup ${c?"":"empty"} ${x.k===T.k?"next":""}">${trophySVG(x)}<b>${esc(x.short)}</b><span>${c?c+" ×":"noch keiner"}</span></div>`;}).join("")}</div>
+   <p class="small muted">Nächstes Grand-Slam-Match: ${esc(T.n)} in ${esc(T.ort)}, gespielt auf ${esc(T.belag)}.</p></section>`;}
+function practicedLvl(){const ks=Object.keys(SKILLS).filter(k=>S.m[k]&&S.m[k].n);if(!ks.length)return 1;return Math.round(ks.reduce((a,k)=>a+lvl(k),0)/ks.length*10)/10;}
 function vHome(){
   const t=today(),done=!!S.missions[t],wkK=weekKeys(),wk=wkK.map(k=>!!S.days[k]),wn=wk.filter(Boolean).length,n=missionCount();
   const [l1,l2]=homeLines();
   const known=WORDS.filter(w=>(enState(w.id)||{}).box>=3).length;
   const deOk=DE.filter(d=>(S.de[d.id]||{}).ok>=2).length;
-  const mLv=Math.round(Object.keys(SKILLS).reduce((a,k)=>a+lvl(k),0)/Object.keys(SKILLS).length*10)/10;
   const due=wordsDue().length,dayN=Object.keys(S.days).length;
   const DL=["Mo","Di","Mi","Do","Fr","Sa","So"];
+  const T=curTour(),P=pausedRun(),slamDone=!!S.slams[t];
+  const stage2=n>COURT.length,inArena=stage2&&UI.sceneView!=="club";
+  const pc=stage2?Math.min(n-COURT.length,ARENA.length):Math.min(n,COURT.length),ptot=stage2?ARENA.length:COURT.length;
+  const Pt=P?P.run.tasks[P.run.i]:null;
   return `${sceneHTML()}
+  ${stage2?`<div class="scene-switch"><button class="chip" data-act="view" data-v="${inArena?"club":"arena"}">${inArena?"Clubplatz ansehen":"Center Court ansehen"}</button></div>`:""}
   <div class="duo" style="margin-top:14px">${lineHTML("lob",l1)}${lineHTML("ace",l2)}</div>
   <div class="stack" style="margin-top:16px">
    <div class="row" style="justify-content:space-between"><h1>${S.name?esc(S.name)+"s":"Mein"} Lern-Match</h1><button class="snd" data-act="snd" aria-label="Töne ${S.sound!==false?"ausschalten":"einschalten"}">${S.sound!==false?"🔊":"🔇"}</button></div>
    <section class="panel stats" aria-label="Fortschritt">
      <div class="balls" aria-label="${S.balls} Bälle">${ballSVG()}<span>${S.balls}</span></div>
      <div><div class="week" aria-label="${wn} von 7 Tagen diese Woche">${wk.map((x,i)=>`<span class="${wkK[i]===t?"today":""}"><i class="${x?"on":""}"></i>${DL[i]}</span>`).join("")}</div><div class="small muted" style="text-align:right">Wochenziel: ${Math.min(wn,5)} von 5 Matches</div></div>
-     <div class="small muted" style="grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>Tennisplatz: ${Math.min(n,COURT.length)} von ${COURT.length} Teilen</span><span>Trainingstage insgesamt: ${dayN}</span></div>
-     <div class="bar" style="grid-column:1/-1"><i style="width:${Math.round(Math.min(n,COURT.length)/COURT.length*100)}%"></i></div>
+     <div class="small muted" style="grid-column:1/-1;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span>${stage2?"Center Court":"Tennisplatz"}: ${pc} von ${ptot} Teilen</span><span>Trainingstage insgesamt: ${dayN}</span></div>
+     <div class="bar" style="grid-column:1/-1"><i style="width:${Math.round(pc/ptot*100)}%"></i></div>
    </section>
-   ${done?`<button class="btn big ghost" data-act="start" data-type="mission">Match nochmal spielen</button>`:`<button class="btn big green" data-act="start" data-type="mission">Heutiges Match starten</button><p class="small muted" style="text-align:center;margin-top:-6px">3 Sätze: Mathe, Englisch, Deutsch · etwa ${S.len==="kurz"?"8":"12"} Minuten</p>`}
+   ${P&&Pt?`<button class="btn big" data-act="resume">Weiterspielen · Satz ${Pt.set+1} von ${P.run.sets.length}</button>`:""}
+   <div class="modes">
+    <button class="mode train" data-act="start" data-type="mission"><span class="mt">Trainings&shy;match</span><span class="md">3 Sätze · ca. 12 Min.</span><span class="md">Mathe, Englisch, Deutsch</span></button>
+    <button class="mode slam" data-act="start" data-type="slam" style="--tc:${T.court};--tc2:${T.court2}"><span class="mt">Grand-Slam-Match</span><span class="md">5 Sätze · ca. 25 Min.</span><span class="md">${esc(T.n)}${slamDone?"":" · Pokal + 25 Bälle"}</span></button>
+   </div>
+   <p class="small muted" style="text-align:center;margin-top:-4px">${done?"Heute schon gespielt. Jedes weitere Match bringt trotzdem Bälle.":"Beide Matches bringen heute ein neues Teil für deinen Platz."}</p>
+   ${cupsHTML()}
    ${quizHTML()}
    <h2 style="margin-top:6px">Freies Training</h2>
    <div class="subjects">
-    <button class="subj" style="--c:var(--math)" data-act="start" data-type="m"><span class="em" aria-hidden="true">🔢</span><b>Mathe</b><span>Stufe ${mLv} von 3</span></button>
+    <button class="subj" style="--c:var(--math)" data-act="start" data-type="m"><span class="em" aria-hidden="true">🔢</span><b>Mathe</b><span>Stufe ${practicedLvl()} von 3</span></button>
     <button class="subj" style="--c:var(--eng)" data-act="start" data-type="e"><span class="em" aria-hidden="true">🇬🇧</span><b>Englisch</b><span>${known} von ${WORDS.length} Wörtern sicher${due?` · ${due} fällig`:""}</span></button>
     <button class="subj" style="--c:var(--deu)" data-act="start" data-type="d"><span class="em" aria-hidden="true">✏️</span><b>Deutsch</b><span>${deOk} von ${DE.length} sicher</span></button>
    </div>
    ${storeOk?"":'<p class="note">In diesem Browser kann gerade nichts gespeichert werden. Öffne die App über das Symbol auf dem Startbildschirm.</p>'}
   </div>`;
 }
-const INTRO={
-  m:{lob:"Da kommt die Mathe-Rakete! Wofür steht eigentlich das M?",ace:"Heute für Mathe! Satz 1: Kopfrechnen und Knobeln."},
-  e:{guest:"Hey! I'm Jay. Let's play!",lob:"Jay ist cool, oder? Satz 2: Ich sag's auf Deutsch, du auf Englisch."},
-  d:{guest:"Hallo, ich bin Bo! Mit meinem großen Sonnenhut reise ich zu allen Tennisturnieren der Welt. Aber deutsche Rechtschreibung finde ich am kniffligsten!",lob:"Satz 3: Deutsch. Komm, wir helfen Bo!"}
-};
+function introLines(r,i){
+  const st=r.sets[i],T=r.tour;
+  if(r.type==="slam")return {
+    m:[["lob",`Willkommen ${T.k==="wi"?"in Wimbledon":"bei den "+T.n} in ${T.ort}! Heute spielen wir ein Grand-Slam-Match mit fünf Sätzen.`],["ace",`Gespielt wird auf ${T.belag}. ${T.fakt} Satz 1: Kopfrechnen!`]],
+    e:[["guest","Hey! I'm Jay. Big match today!"],["lob","Satz 2: Vokabeln. Ich sag's auf Deutsch, du auf Englisch."]],
+    d:[["guest",`Hallo, ich bin Bo! Ich bin extra nach ${T.ort} gereist. Hilfst du mir wieder mit der Rechtschreibung und Grammatik?`],["lob","Satz 3: Deutsch. Komm, wir helfen Bo!"]],
+    g:[["guest","Würfli spuckt heute Sätze statt Bälle! In jedem Satz fehlt ein Wort."],["ace","Satz 4: Englische Grammatik. Nach jeder Antwort lese ich dir den ganzen Satz vor."]],
+    k:[["guest","Ich bin Schiri Uhu. Ich passe auf, dass alles nach den Regeln läuft. Auch beim Rechnen!"],["lob",`Satz 5, der Entscheidungssatz! Jetzt kommt dein aktuelles Mathe-Kapitel: ${(KAP[S.mk]||KAP[2]).short.replace(/^\d+ · /,"")}.`]]
+  }[st.s];
+  return {
+    m:[["lob","Da kommt die Mathe-Rakete! Wofür steht eigentlich das M?"],["ace","Heute für Mathe! Satz 1: Kopfrechnen und Knobeln."]],
+    e:[["guest","Hey! I'm Jay. Let's play!"],["lob","Jay ist cool, oder? Satz 2: Ich sag's auf Deutsch, du auf Englisch."]],
+    d:[["guest","Hallo, ich bin Bo! Mit meinem großen Sonnenhut reise ich zu allen Tennisturnieren der Welt. Aber deutsche Rechtschreibung finde ich am kniffligsten!"],["lob","Satz 3: Deutsch. Komm, wir helfen Bo!"]]
+  }[st.s];
+}
 function scoreHTML(t){
-  const r=UI.run,s=SUBJ[t.subj],sc=r.score[t.subj];
-  return `<div class="score" aria-label="Spielstand"><div class="set"><span class="lbl2">${r.type==="mission"?"SATZ "+s.set:"TRAINING"}</span><span class="val" style="font-size:1rem">${s.n}</span></div>
+  const r=UI.run,st=r.sets[t.set],s=SUBJ[st.s],sc=r.score[t.set];
+  const lbl=r.type==="slam"?`SATZ ${t.set+1}/5 · ${r.tour.short.toUpperCase()}`:r.type==="mission"?`SATZ ${t.set+1}/3`:"TRAINING";
+  return `<div class="score" aria-label="Spielstand"><div class="set"><span class="lbl2">${esc(lbl)}</span><span class="val" style="font-size:1rem">${s.n}</span></div>
    <div><span class="lbl2">PUNKTE</span><span class="val pt">${PT[sc.p]}</span></div><div id="games"><span class="lbl2">SPIELE</span><span class="val">${sc.g}</span></div>
    ${r.rally>=3?`<div><span class="lbl2">SERIE</span><span class="val">${r.rally}</span></div>`:""}</div>`;
 }
 function vTask(){
   const r=UI.run,t=cur();
-  const segs=r.tasks.map((x,i)=>x.intro?"":`<i class="${i===r.i?"cur":r.res[i]==="no"?"no":r.res[i]?"ok":""}"></i>`).join("");
+  const segs=r.tasks.map((x,i)=>x.intro||x.set!==t.set?"":`<i class="${i===r.i?"cur":r.res[i]==="no"?"no":r.res[i]?"ok":""}"></i>`).join("");
   const exitLbl=`<button class="linkbtn" data-act="quit">← Pause</button>`;
-  if(t.intro){const s=SUBJ[t.intro],g=GUESTS[t.intro],I=INTRO[t.intro];
-    return `<div class="topbar">${exitLbl}<span class="tag" style="--c:${s.c}">Satz ${s.set} · ${s.em} ${s.n}</span></div><div class="prog">${segs}</div>
-    <div class="stack" style="margin-top:16px"><div class="guest ${g.anim}" style="--gbg:${g.bg}">${guestSVG(t.intro)}<span class="gname">${esc(g.n)}</span></div>
-    <div class="duo">${I.guest?lineHTML("guest",I.guest,{g:t.intro}):""}${I.lob?lineHTML("lob",I.lob):""}${I.ace?lineHTML("ace",I.ace):""}</div>
+  const st=r.sets[t.set],s=SUBJ[st.s];
+  if(t.intro){const g=GUESTS[st.g],I=introLines(r,t.set);
+    return `<div class="topbar">${exitLbl}<span class="tag" style="--c:${s.c}">Satz ${t.set+1} · ${s.em} ${s.n}</span></div><div class="prog">${segs}</div>
+    <div class="stack" style="margin-top:16px"><div class="guest ${g.anim}" style="--gbg:${g.bg}">${guestSVG(st.g)}<span class="gname">${esc(g.n)}</span>${r.tour?`<span class="tname">${esc(r.tour.n)}</span>`:""}</div>
+    <div class="duo">${I.map(([w,txt])=>lineHTML(w,txt,{g:st.g})).join("")}</div>
     <button class="btn big green" data-act="next">Los!</button></div>`;}
-  const s=SUBJ[t.subj];const num=r.tasks.slice(0,r.i+1).filter(x=>!x.intro&&x.subj===t.subj).length,tot=r.tasks.filter(x=>!x.intro&&x.subj===t.subj).length;
+  const num=r.tasks.slice(0,r.i+1).filter(x=>!x.intro&&x.set===t.set).length,tot=r.tasks.filter(x=>!x.intro&&x.set===t.set).length;
   const A=UI.answered;
   let lob;
   if(!A)lob=taskPrompt(t);
   else if(UI.gameWon)lob="Spiel! Du hast ein Spiel gewonnen!";
   else if(UI.rallyBonus)lob=`Ballwechsel × ${r.rally}! Dafür gibt's 5 Bonus-Bälle!`;
-  else if(A.res==="ok")lob=t.subj==="e"?pickA(PRAISE_EN):pickA(PRAISE);
+  else if(A.res==="ok")lob=t.subj==="e"||t.subj==="g"?pickA(PRAISE_EN):pickA(PRAISE);
   else if(A.res==="near")lob="Fast! Nur ein kleiner Schreibfehler.";
   else lob=fill(pickA(ASK));
   if(A&&UI.levelUp){lob=`Stufe hoch bei „${UI.levelUp}“! Jetzt wird's ein bisschen schwerer.`;UI.levelUp=null;}
@@ -770,10 +1011,13 @@ function vTask(){
 }
 function taskPrompt(t){
   if(t.subj==="e")return t.kind==="mc"?"Wie heißt das auf Englisch? Tipp die richtige Antwort an.":"Wie schreibt man das auf Englisch? Ich hab's vergessen.";
-  if(t.subj==="d")return {gap:"Welche Buchstaben fehlen da?",gross:"Welches Wort muss man großschreiben?",wortart:"Welche Wortart ist das?",fehler:"Ein Wort ist falsch geschrieben. Findest du es?"}[t.item.kind];
-  return {plus:"Rechnest du das für mich im Kopf?",minus:"Rechnest du das für mich im Kopf?",mal:"Einmaleins! Weißt du es?",geteilt:"Wie oft passt das rein? Ich komm nicht drauf.",begriffe:"Wie heißt die markierte Zahl? Ich hab's vergessen.",ueberschlag:"Erst runden, dann rechnen. Hilfst du mir?",luecke:"Welche Zahl fehlt da? Ich seh nur ein Fragezeichen.",mauer:"Welche Zahl kommt oben auf die Mauer?",probe:"Stimmt die Rechnung? Mach mal die Probe!",schriftlich:"Schriftlich rechnen kannst du besser als ich!",text:"Lies genau! Was kommt raus?"}[t.skill];
+  if(t.subj==="g")return "Welches Wort passt in die Lücke? Ich bin mir nicht sicher.";
+  if(t.subj==="d"){const d=t.item;if(d.kind==="q")return {zeitform:"Welche Zeitform ist das? Die verwechsle ich immer.",steigerung:"Wie geht das weiter? Hilf mir!",satzglied:"Satzglieder! Weißt du die Antwort?",satzzeichen:"Welches Zeichen gehört ans Ende?",rede:"Wo kommen bei der wörtlichen Rede die Zeichen hin?",pronomen:"Welches Wort passt in die Lücke?"}[d.cat]||"Weißt du die Antwort?";
+    return {gap:"Welche Buchstaben fehlen da?",gross:"Welches Wort muss man großschreiben?",wortart:"Welche Wortart ist das?",fehler:"Ein Wort ist falsch geschrieben. Findest du es?"}[d.kind];}
+  return {plus:"Rechnest du das für mich im Kopf?",minus:"Rechnest du das für mich im Kopf?",mal:"Einmaleins! Weißt du es?",geteilt:"Wie oft passt das rein? Ich komm nicht drauf.",begriffe:"Wie heißt die markierte Zahl? Ich hab's vergessen.",ueberschlag:"Erst runden, dann rechnen. Hilfst du mir?",luecke:"Welche Zahl fehlt da? Ich seh nur ein Fragezeichen.",mauer:"Welche Zahl kommt oben auf die Mauer?",probe:"Stimmt die Rechnung? Mach mal die Probe!",schriftlich:"Schriftlich rechnen kannst du besser als ich!",text:"Lies genau! Was kommt raus?",worte:"Was soll ich da rechnen? Lies ganz genau!",geschickt:"Geht das auch schlau? Rechne geschickt!",klammer:"Was rechnet man hier zuerst?",groessen:"Rechnest du das für mich um?",zeit:"Wie lange dauert das? Ich hab keine Uhr.",schriftmal:"Schriftlich malnehmen kannst du besser als ich!",gtext:"Lies genau! Was kommt raus?"}[t.skill];
 }
-function optsHTML(o,a,A,grid){return `<div class="opts ${grid?"grid":""}">${o.map((x,i)=>{let c="";if(A){if(i===a)c="right";else if(i===A.val)c="wrong";}return `<button class="opt ${c}" data-act="pick" data-v="${i}" ${A?"disabled":""}>${esc(x)}</button>`;}).join("")}</div>`;}
+function optsHTML(o,a,A,grid){const cols=typeof grid==="number"?grid:0;const words=o.some(x=>String(x).length>4);
+  return `<div class="opts ${grid?"grid":""} ${grid&&words?"words":""}" ${cols?`style="grid-template-columns:repeat(${cols},minmax(0,1fr))"`:""}>${o.map((x,i)=>{let c="";if(A){if(i===a)c="right";else if(i===A.val)c="wrong";}return `<button class="opt ${c}" data-act="pick" data-v="${i}" ${A?"disabled":""}>${esc(x)}</button>`;}).join("")}</div>`;}
 function taskBody(t,A){
   if(t.subj==="m"){
     const qh=t.raw?t.q:`<div class="q big">${t.q} = ?</div>`;
@@ -787,60 +1031,70 @@ function taskBody(t,A){
     if(A)return q+`<div class="answer" style="justify-content:flex-start;padding:0 12px;font-size:1.4rem">${esc(A.val)||"—"}</div>`;
     return q+`<form id="en-form" class="stack"><input class="inp" id="en-in" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="auf Englisch …" value="${esc(UI.input)}"><button class="btn big" type="submit">Prüfen</button></form>`;
   }
+  if(t.subj==="g"){const g=t.item,parts=g.s.split("___"),gap=`<span class="gap">${A?esc(g.o[g.a]):"?"}</span>`;
+    const short=g.o.length<=3&&g.o.every(x=>x.length<=10);
+    return `<p class="small muted">Welches Wort passt?</p><p class="q" style="font-size:1.35rem">${esc(parts[0])}${gap}${esc(parts.slice(1).join("___"))}</p>`+optsHTML(g.o,g.a,A,short?g.o.length:false);}
   const d=t.item;let q="";
   if(d.kind==="gap")q=`<p class="q big" style="font-size:2.2rem">${esc(d.pre)}<span class="gap">${A?esc(d.o[d.a]):"?"}</span>${esc(d.post)}</p>`;
   else if(d.kind==="gross")q=`<p class="q" style="font-size:1.35rem">${esc(d.s)}</p>`;
   else if(d.kind==="wortart")q=`<p class="q big">${esc(d.w)}</p>`;
+  else if(d.kind==="q")q=`<p class="q" style="font-size:1.3rem">${esc(d.q)}</p>`;
   else q=`<p class="small muted">Tipp das falsch geschriebene Wort an.</p>`;
-  return q+optsHTML(d.o,d.a,A,d.kind==="gap");
+  return q+optsHTML(d.o,d.a,A,d.kind==="gap"||d.cat==="satzzeichen"?3:false);
 }
 /* Ace erklärt */
 function feedback(t,A){
   const ok=A.res==="ok";let head="",body="";
   if(t.subj==="m"){head=ok?"Richtig!":`Richtig ist: ${t.kind==="mc"?esc(t.o[t.a]):fmt(t.a)+(t.unit?" "+esc(t.unit):"")}`;body=t.explRaw?t.expl:esc(t.expl||"");}
   else if(t.subj==="e"){const main=t.w.en[0];head=ok?`Richtig: ${esc(main)}`:A.res==="near"?`Fast! Richtig geschrieben: ${esc(main)}`:`Richtig ist: ${esc(main)}`;body=(t.w.en.length>1?`Auch richtig: ${esc(t.w.en.slice(1).join(", "))}. `:"")+esc(t.w.note||"");body+=`<br><button class="speak" data-act="speak" data-t="${esc(main)}">🔊 Anhören</button>`;}
+  else if(t.subj==="g"){const g=t.item,full=egSentence(g);head=ok?"Richtig!":`Richtig ist: ${esc(g.o[g.a])}`;body=`<span lang="en">${esc(full)}</span><br>${esc(g.tip)}<br><button class="speak" data-act="speak" data-t="${esc(full)}">🔊 Anhören</button>`;}
   else{const d=t.item;head=ok?"Richtig!":(d.kind==="gap"?`Richtig: ${esc(d.w)}`:d.kind==="fehler"?`Richtig wäre: ${esc(d.c)}`:`Richtig: ${esc(d.o[d.a])}`);body=esc(d.tip||"");}
   return `<div role="status">${lineHTML("ace",`<span class="who">${esc(AN())}</span><b class="big">${head}</b>${body?`<span class="ex">${body}</span>`:""}`,{html:true,res:ok?"ok":A.res==="near"?"near":"no"})}</div>`;
 }
 function vDone(){
   const r=UI.run,res=r.res.filter(Boolean),ok=res.filter(x=>x!=="no").length;const ni=UI.done.newItem;
-  const isM=r.type==="mission";const games=["m","e","d"].reduce((a,k)=>a+r.score[k].g,0);
-  const l1=ni>=0?`Juhu! Neu auf deinem Platz: ${COURT[ni].n}!`:isM?"Match nochmal gewonnen! Du bist echt fleißig!":"Training geschafft! Weiter so!";
-  const l2=isM?`Match gewonnen! ${games} ${games===1?"Spiel":"Spiele"}, ${ok} von ${res.length} Bällen richtig zurückgespielt.`:`${ok} von ${res.length} richtig. Gutes Training!`;
-  const rows=(isM?["m","e","d"]:[r.type]).map(k=>{const sc=r.score[k];return `<tr><td>${SUBJ[k].em} ${SUBJ[k].n}</td><td class="g">${sc.g}</td><td>${sc.ok}/${sc.n}</td></tr>`;}).join("");
-  return `${sceneHTML(ni)}
+  const isS=r.type==="slam",isM=r.type==="mission"||isS,T=r.tour;const games=r.score.reduce((a,s)=>a+s.g,0);
+  const piece=ni>=0?(ni===COURT.length?`Dein Clubplatz ist fertig, jetzt kommt der Center Court! Neu: ${pieceName(ni)}.`:`Neu auf deinem Platz: ${pieceName(ni)}!`):"";
+  const l1=isS&&r.title?`Pokal gewonnen! Du hast ${T.bei} gewonnen!`:ni>=0?`Juhu! ${piece}`:isM?"Match nochmal gewonnen! Du bist echt fleißig!":"Training geschafft! Weiter so!";
+  const l2=isM?`${isS?"Grand-Slam-Sieg":"Match gewonnen"}! ${games} ${games===1?"Spiel":"Spiele"}, ${ok} von ${res.length} Bällen richtig zurückgespielt.${isS&&r.title&&piece?" "+piece:""}`:`${ok} von ${res.length} richtig. Gutes Training!`;
+  const rows=r.sets.map((st,i)=>{const sc=r.score[i],s=SUBJ[st.s];return `<tr><td>${s.em} ${s.n}</td><td class="g">${sc.g}</td><td>${sc.ok}/${sc.n}</td></tr>`;}).join("");
+  return `${sceneHTML(ni,isS?T:null)}
   <div class="duo" style="margin-top:14px">${lineHTML("lob",l1)}${lineHTML("ace",l2)}</div>
   <div class="stack" style="margin-top:16px">
-   <section class="board" aria-label="Ergebnis"><p class="disp" style="margin-bottom:4px">${isM?"Match-Ergebnis":"Trainings-Ergebnis"}</p>
+   ${isS&&r.title?`<section class="panel stack trophy-win" aria-label="Pokal">${trophySVG(T,true)}<p class="disp">${esc(T.n)}</p><p class="small muted">Dein ${S.titles[T.k]}. Pokal aus ${esc(T.ort)}. Nächstes Turnier: ${esc(curTour().n)}.</p></section>`:""}
+   <section class="board" aria-label="Ergebnis"><p class="disp" style="margin-bottom:4px">${isS?"Grand Slam · "+esc(T.n):isM?"Match-Ergebnis":"Trainings-Ergebnis"}</p>
     <table><thead><tr><th>Satz</th><th>Spiele</th><th>Richtig</th></tr></thead><tbody>${rows}</tbody></table></section>
    <section class="panel stack" style="align-items:center;text-align:center;gap:6px">
     <div class="row" style="justify-content:center">${ballSVG()}<span class="big-num">+${r.earned}</span></div>
-    <p><b>Bälle für deinen Korb</b>${r.weekBonus?"<br>Wochenziel geschafft: 25 Bonus-Bälle!":""}</p>
+    <p><b>Bälle für deinen Korb</b>${r.title?"<br>Grand-Slam-Bonus: 25 Bälle!":""}${r.weekBonus?"<br>Wochenziel geschafft: 25 Bonus-Bälle!":""}</p>
    </section>
    <button class="btn big green" data-act="home">Zum Tennisplatz</button>
   </div>`;
 }
 function vWords(){
   const groups={};WORDS.forEach(w=>{(groups[w.unit]=groups[w.unit]||[]).push(w);});
+  const order=Object.entries(groups).sort((a,b)=>(/Tennis/.test(a[0])?1:0)-(/Tennis/.test(b[0])?1:0));
   return `<div class="stack" style="margin-top:20px">
    <div class="duo">${lineHTML("ace","Tipp auf den Lautsprecher, dann hörst du das Wort auf Englisch.")}</div>
    <h1>Meine Vokabeln</h1>
    <p class="small muted">Die grünen Balken zeigen, wie sicher du ein Wort schon kannst. Bei fünf ist es im Langzeitgedächtnis.</p>
-   ${Object.entries(groups).map(([u,ws])=>`<h2>${esc(u)}</h2><div class="wlist">${ws.map(w=>{const b=(enState(w.id)||{}).box||0;return `<div class="w"><div style="min-width:0"><div class="en">${esc(w.en[0])}</div><div class="de">${esc(w.de)}</div></div><div class="pips" aria-label="Stufe ${b} von 5">${[1,2,3,4,5].map(i=>`<i class="${b>=i?"on":""}"></i>`).join("")}</div><button class="say" data-act="speak" data-t="${esc(w.en[0])}" aria-label="${esc(w.en[0])} anhören">🔊</button></div>`;}).join("")}</div>`).join("")}
+   ${order.map(([u,ws])=>`<h2>${esc(u)}</h2><div class="wlist">${ws.map(w=>{const b=(enState(w.id)||{}).box||0;return `<div class="w"><div style="min-width:0"><div class="en">${esc(w.en[0])}</div><div class="de">${esc(w.de)}</div></div><div class="pips" aria-label="Stufe ${b} von 5">${[1,2,3,4,5].map(i=>`<i class="${b>=i?"on":""}"></i>`).join("")}</div><button class="say" data-act="speak" data-t="${esc(w.en[0])}" aria-label="${esc(w.en[0])} anhören">🔊</button></div>`;}).join("")}</div>`).join("")}
   </div>`;
 }
 function report(){
   const keys=[];for(let i=6;i>=0;i--)keys.push(addDays(today(),-i));
   const sum={m:[0,0],e:[0,0],d:[0,0]};keys.forEach(k=>{const h=S.hist[k];if(h)["m","e","d"].forEach(s=>{sum[s][0]+=h[s][0];sum[s][1]+=h[s][1];});});
   const pct=s=>s[1]?Math.round(s[0]/s[1]*100)+" % richtig ("+s[1]+" Aufgaben)":"noch nicht geübt";
-  const days=keys.filter(k=>S.days[k]).length;
-  const weakM=Object.keys(SKILLS).filter(k=>S.m[k]&&S.m[k].n>=3&&S.m[k].ok/S.m[k].n<.7).map(k=>SKILLS[k]);
+  const days=keys.filter(k=>S.days[k]).length,slams=keys.filter(k=>S.slams[k]).length;
+  const used=Object.keys(SKILLS).filter(k=>S.m[k]&&S.m[k].n);
+  const weakM=used.filter(k=>S.m[k].n>=3&&S.m[k].ok/S.m[k].n<.7).map(k=>SKILLS[k]);
   const hardW=WORDS.filter(w=>(enState(w.id)||{}).miss>=2).map(w=>w.en[0]);
   const known=WORDS.filter(w=>(enState(w.id)||{}).box>=3).length,started=WORDS.filter(w=>enState(w.id)).length;
+  const egOk=EG.filter(g=>(S.eg[g.id]||{}).ok>=2).length,egWeak=EG.filter(g=>(S.eg[g.id]||{}).last===false).length;
   const deWeak={};DE.forEach(d=>{const s=S.de[d.id];if(s&&s.last===false)deWeak[DE_CAT[d.cat]]=(deWeak[DE_CAT[d.cat]]||0)+1;});
-  const L=[`Lern-Match · Wochenbericht${S.name?" für "+S.name:""}`,`Trainingstage in den letzten 7 Tagen: ${days} · insgesamt: ${Object.keys(S.days).length}`,"",
-    `Mathe: ${pct(sum.m)}`,`  Stufen: ${Object.keys(SKILLS).map(k=>SKILLS[k]+" "+lvl(k)).join(", ")}`,weakM.length?`  Noch unsicher: ${weakM.join(", ")}`:"  Keine Schwachstelle auffällig.","",
-    `Englisch: ${pct(sum.e)}`,`  Vokabeln: ${known} sicher, ${started} angefangen, ${WORDS.length} insgesamt`,hardW.length?`  Schwierige Wörter: ${hardW.slice(0,12).join(", ")}`:"","",
+  const L=[`Lern-Match · Wochenbericht${S.name?" für "+S.name:""}`,`Trainingstage in den letzten 7 Tagen: ${days} · insgesamt: ${Object.keys(S.days).length}`,`Davon Grand-Slam-Tage: ${slams} · Pokale: ${TOURN.map(T=>T.short+" "+(S.titles[T.k]||0)).join(", ")}`,"",
+    `Mathe: ${pct(sum.m)} · Schwerpunkt ${(KAP[S.mk]||KAP[2]).n}`,`  Stufen: ${used.map(k=>SKILLS[k]+" "+lvl(k)).join(", ")||"noch keine"}`,weakM.length?`  Noch unsicher: ${weakM.join(", ")}`:"  Keine Schwachstelle auffällig.","",
+    `Englisch: ${pct(sum.e)}`,`  Vokabeln: ${known} sicher, ${started} angefangen, ${WORDS.length} insgesamt`,hardW.length?`  Schwierige Wörter: ${hardW.slice(0,12).join(", ")}`:"",`  Grammatik: ${egOk} von ${EG.length} Satzaufgaben sicher${egWeak?`, ${egWeak} zuletzt falsch`:""}`,"",
     `Deutsch: ${pct(sum.d)}`,Object.keys(deWeak).length?`  Zuletzt falsch bei: ${Object.entries(deWeak).map(([k,v])=>k+" ("+v+")").join(", ")}`:"  Keine Schwachstelle auffällig."];
   return L.filter((x,i,a)=>!(x===""&&a[i-1]==="")).join("\n");
 }
@@ -850,10 +1104,14 @@ function vParents(){
    <h1>Für Eltern</h1>
    <section class="panel stack"><h2>Wochenbericht</h2><textarea class="inp" id="rep" readonly>${esc(report())}</textarea>
     <div class="row"><button class="btn" data-act="share-rep">Teilen</button><button class="btn ghost" data-act="copy-rep">Kopieren</button></div></section>
+   <section class="panel stack"><h2>Schulstoff</h2>
+    <div><span class="lbl">Englisch: aktuelle Unit</span><div class="seg">${SCHOOL_UNITS.map(([i,u])=>`<button data-act="enu" data-v="${i}" aria-pressed="${enUnitCur()===i}">${esc(u.replace(/^Orange Line 1 · /,""))}</button>`).join("")}</div><p class="small muted" style="margin-top:4px">Neue Vokabeln kommen aus dieser Unit, dazu ab und zu Tennis-Englisch. Bekannte Wörter werden weiter wiederholt.</p></div>
+    <div><span class="lbl">Mathe: aktuelles Kapitel</span><div class="seg">${Object.entries(KAP).map(([k,v])=>`<button data-act="mk" data-v="${k}" aria-pressed="${+S.mk===+k}">${esc(v.short)}</button>`).join("")}</div><p class="small muted" style="margin-top:4px">${esc((KAP[S.mk]||KAP[2]).n)} kommt im Trainingsmatch öfter dran und füllt im Grand-Slam-Match den 5. Satz.</p></div>
+   </section>
    <section class="panel stack"><h2>Einstellungen</h2>
     <div><label class="lbl" for="s-name">Name</label><input class="inp" id="s-name" value="${esc(S.name)}" style="font-size:1rem"></div>
     <div><span class="lbl">Namen der Tennisbälle</span><div class="names"><input class="inp" id="s-lob" value="${esc(LN())}" aria-label="Ball mit roten Haaren" maxlength="14"><input class="inp" id="s-ace" value="${esc(AN())}" aria-label="Schlauer Ball" maxlength="14"></div></div>
-    <div><span class="lbl">Länge des Matches</span><div class="seg"><button data-act="len" data-v="kurz" aria-pressed="${S.len==="kurz"}">Kurz (ca. 8 Min.)</button><button data-act="len" data-v="normal" aria-pressed="${S.len!=="kurz"}">Normal (ca. 12 Min.)</button></div></div>
+    <div><span class="lbl">Länge des Trainingsmatches</span><div class="seg"><button data-act="len" data-v="kurz" aria-pressed="${S.len==="kurz"}">Kurz (ca. 8 Min.)</button><button data-act="len" data-v="normal" aria-pressed="${S.len!=="kurz"}">Normal (ca. 12 Min.)</button></div><p class="small muted" style="margin-top:4px">Das Grand-Slam-Match dauert immer etwa 25 Minuten.</p></div>
     <div><span class="lbl">Neue Vokabeln pro Tag</span><div class="seg">${[3,5,8].map(n=>`<button data-act="npd" data-v="${n}" aria-pressed="${(S.newPerDay||5)===n}">${n}</button>`).join("")}</div></div>
     <div><span class="lbl">Stimme fürs Englische</span>
      ${enVoices().length?`<select class="inp" id="s-voice" style="font-size:1rem">${enVoices().map(v=>`<option value="${esc(v.voiceURI)}" ${VOICE&&VOICE.voiceURI===v.voiceURI?"selected":""}>${esc(v.name)} (${esc(v.lang)})</option>`).join("")}</select>`:`<p class="small muted">Dieses Gerät hat keine englische Stimme gemeldet. Unter Android hilft es, in den Einstellungen bei „Text-in-Sprache“ eine englische Stimme zu laden.</p>`}
@@ -877,7 +1135,12 @@ document.addEventListener("click",async ev=>{
    case"tab":UI.view=b.dataset.id;render();break;
    case"home":UI.view="home";render();break;
    case"start":startRun(b.dataset.type);break;
-   case"quit":UI.view="home";UI.run=null;try{speechSynthesis.cancel();}catch(e){}render();break;
+   case"resume":{const P=pausedRun();if(!P)break;UI.run=P.run;UI.view="task";UI.input="";UI.answered=null;render();snd("tap");introVoice();break;}
+   case"view":UI.sceneView=b.dataset.v;render();break;
+   case"mk":S.mk=+b.dataset.v;save();render();break;
+   case"enu":S.enUnit=+b.dataset.v;save();render();break;
+   case"quit":{const r=UI.run;if(r&&UI.answered){r.i++;UI.answered=null;}if(r&&r.i>=r.tasks.length){finish();break;}
+     const keep=r&&(r.type==="mission"||r.type==="slam");if(keep)keepRun();UI.view="home";UI.run=null;try{speechSynthesis.cancel();}catch(e){}render();if(keep)toast("Match pausiert. Du kannst heute weiterspielen.");break;}
    case"next":next();break;
    case"pick":answer(+b.dataset.v,ev);break;
    case"key":{const k=b.dataset.k;if(k==="ok"){if(UI.input!=="")answer(UI.input,ev);else talk("Tipp zuerst deine Zahl ein.");}else{if(k==="back")UI.input=UI.input.slice(0,-1);else if(UI.input.length<6)UI.input+=k;snd("tap");const sp=$(".answer span");if(sp)sp.textContent=UI.input;}break;}
@@ -898,7 +1161,7 @@ document.addEventListener("click",async ev=>{
    case"share-rep":{const text=report();try{if(navigator.share){await navigator.share({title:"Lern-Match Wochenbericht",text});return;}}catch(e){if(e&&e.name==="AbortError")return;}toast("Teilen geht hier nicht. Nimm „Kopieren“.");break;}
    case"wipe":if(UI.confirm!=="wipe"){UI.confirm="wipe";render();break;}{const nm=S.name,a=S.aceName,l=S.lobName;S=blank();S.name=nm;S.aceName=a;S.lobName=l;S.setupDone=true;S.imported=true;UI.confirm=null;save();render();toast("Fortschritt zurückgesetzt.");}break;
    default:
-    if(SCENE_TALK[act]){const [l,a]=SCENE_TALK[act];if(act==="wuerfli")shoot();else if(act==="fans"){snd("cheer");fx(b,"go");}else{snd("tap");fx(b,"wiggle");}
+    if(SCENE_TALK[act]){const [l,a]=SCENE_TALK[act];if(act==="wuerfli")shoot();else if(act==="fans"||act==="fans2"){snd("cheer");fx(b,"go");}else{snd("tap");fx(b,"wiggle");}
       if(b.closest(".scene")&&$(".bubble.lob[data-tw]"))talk(fill(l),fill(a));}
   }
 });
