@@ -1,12 +1,19 @@
 /* familie-sync.js – Familienspeicher (Supabase) für alle Apps unter thmsbauer1.github.io
    Ohne Bibliotheken, nur fetch. Offline-fest: Fehler werden geschluckt, Log-Einträge warten in einer Warteschlange.
-   Die Anmeldung liegt im gemeinsamen Browserspeicher der Webadresse – einmal anmelden gilt für alle Apps. */
+   Die Anmeldung liegt im gemeinsamen Browserspeicher der Webadresse – einmal anmelden gilt für alle Apps.
+   Diese Datei ist in allen Repos gleich (lern-match, spuernase, testtrainer). Änderungen bitte überall übernehmen.
+
+   Einbinden in eine App (siehe spuernase):
+     FamilieSync.attach({app:"spuernase", get:()=>S, set:d=>{S=d;}, store:()=>localStorage…, render, idle:()=>bool, showChild:(data,info)=>{…}})
+     im save() der App:   FamilieSync.stamp(S); …lokal schreiben…; FamilieSync.saved();
+     im Elternbereich:    ${FamilieSync.panelHTML()} */
 (function(){
   const URL_="https://rcfpnxcjfzeieqpvmkep.supabase.co";
   const KEY_="sb_publishable_qpgo7Vggg62vdIT0kqM9uA_Ti0gFrW1"; /* öffentlicher Schlüssel, Schutz liegt in den Datenbankregeln */
   const SESS="familie-sb-session",MEMB="familie-sb-member",QUEUE="familie-sb-queue";
   const ls={get(k){try{const t=localStorage.getItem(k);return t?JSON.parse(t):null;}catch(e){return null;}},
             set(k,v){try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+  const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
   async function req(path,opt){
     opt=opt||{};const h=Object.assign({apikey:KEY_,"Content-Type":"application/json"},opt.headers||{});
@@ -22,6 +29,7 @@
     try{const d=await req("/auth/v1/token?grant_type=refresh_token",{method:"POST",auth:false,body:{refresh_token:s.refresh}});return keep(d).access;}
     catch(e){if(e.status===400||e.status===401){ls.set(SESS,null);ls.set(MEMB,null);}return null;}
   }
+  const netErr=e=>navigator.onLine===false||e instanceof TypeError?"Gerade kein Internet – wird später abgeglichen.":e.message;
 
   const FS={
     session(){return ls.get(SESS);},
@@ -59,6 +67,84 @@
       try{await req("/rest/v1/activity_log",{method:"POST",headers:{Prefer:"return=minimal"},body:q});const rest=(ls.get(QUEUE)||[]).slice(q.length);ls.set(QUEUE,rest);}catch(e){}
     }
   };
+
+  /* ---------- Fertiger Abgleich für eine App ----------
+     Regel: Der neuere Stand (savedAt) gewinnt. Hochgeladen wird erst nach einem erfolgreichen Abgleich,
+     damit ein leeres neues Gerät nie einen vorhandenen Stand überschreibt. */
+  let C=null;const ST={ready:false,busy:false,t:null,last:null,err:null,ui:{}};
+  function rerender(){if(C&&(!C.idle||C.idle()))C.render();}
+  FS.stamp=d=>{if(d&&typeof d==="object")d.savedAt=Date.now();};
+  FS.saved=()=>{if(!C||!ST.ready||!FS.session())return;clearTimeout(ST.t);ST.t=setTimeout(()=>FS.syncNow(),4000);};
+  FS.syncStart=async()=>{
+    if(!C||!FS.session()||ST.busy)return;ST.busy=true;
+    try{const m=FS.member()||await FS.loadMember();if(!m){ST.err="Dieses Konto ist noch keiner Familie zugeordnet.";return;}
+      const r=await FS.pull(C.app),loc=C.get()||{};
+      if(r&&r.data&&(r.data.savedAt||0)>(loc.savedAt||0)){
+        if(C.idle&&!C.idle())return; /* mitten im Lesen/Üben nicht austauschen – beim nächsten Öffnen erneut */
+        C.set(r.data);C.store();}
+      else if(!C.hasProgress||C.hasProgress())await FS.push(C.app,loc);
+      ST.ready=true;ST.err=null;ST.last=new Date();FS.flush();
+    }catch(e){ST.err=netErr(e);}
+    finally{ST.busy=false;rerender();}
+  };
+  FS.syncNow=async keepalive=>{
+    if(!C||!FS.session())return;if(!ST.ready)return FS.syncStart();clearTimeout(ST.t);
+    try{await FS.push(C.app,C.get(),keepalive);ST.last=new Date();ST.err=null;}catch(e){ST.err=netErr(e);}
+  };
+  FS.attach=cfg=>{
+    C=Object.assign({btn:"btn sm",btn2:"btn ghost sm"},cfg);
+    addEventListener("online",()=>ST.ready?FS.syncNow():FS.syncStart());
+    document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")FS.syncNow(true);else FS.syncStart();});
+    FS.syncStart();
+  };
+
+  /* ---------- Anmeldebereich für die Elternansicht ---------- */
+  FS.panelHTML=()=>{
+    if(!C)return"";const s=FS.session(),m=FS.member(),U=ST.ui;
+    if(!s)return`<div class="panel stack fs-box"><h2>Familienspeicher</h2>
+      <p class="small muted">Mit der Anmeldung wird der Stand gesichert, und ihr seht ihn auch auf euren Handys. Eine Anmeldung gilt für alle Apps.</p>
+      <form id="fs-login" class="stack"><input class="fs-inp" id="fs-mail" type="email" autocomplete="username" placeholder="E-Mail" value="${esc(U.mail||"")}" required>
+       <input class="fs-inp" id="fs-pw" type="password" autocomplete="current-password" placeholder="Passwort" required>
+       <button class="${C.btn}" type="submit" ${U.busy?"disabled":""}>${U.busy?"Melde an …":"Anmelden"}</button></form>
+      ${U.err?`<p class="small fs-err">${esc(U.err)}</p>`:""}</div>`;
+    const tm=ST.last?ST.last.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):null;
+    const kids=(U.kids||[]).filter(k=>k.role==="child"&&(!m||k.id!==m.id));
+    return`<div class="panel stack fs-box"><h2>Familienspeicher</h2>
+      <p class="small">Angemeldet als <b>${esc(m?m.display_name:s.email)}</b>${m&&m.role==="parent"?" (Elternteil)":""}</p>
+      <p class="small muted">${ST.err?esc(ST.err):ST.busy?"Gleiche ab …":tm?"Zuletzt abgeglichen um "+tm+" Uhr.":"Noch nicht abgeglichen."}</p>
+      <div class="row fs-row"><button class="${C.btn}" data-fs="sync">Jetzt abgleichen</button><button class="${C.btn2}" data-fs="out">Abmelden</button></div>
+      ${m&&m.role==="parent"&&C.showChild?`<div class="stack"><p class="small"><b>Stand eines Kindes ansehen</b></p>
+        ${kids.length?`<div class="row fs-row">${kids.map(k=>`<button class="${C.btn2}" data-fs="kid" data-id="${esc(k.id)}" data-name="${esc(k.display_name)}">${esc(k.display_name)}</button>`).join("")}</div>`:`<button class="${C.btn2}" data-fs="kids">Kinder laden</button>`}
+        ${U.kidMsg?`<p class="small muted">${esc(U.kidMsg)}</p>`:""}</div>`:""}
+    </div>`;
+  };
+  const css=document.createElement("style");
+  css.textContent=".fs-inp{box-sizing:border-box;width:100%;font:inherit;font-size:1rem;padding:11px 12px;border:2px solid currentColor;border-radius:4px;background:transparent;color:inherit}.fs-err{color:#d6455a}.fs-row{display:flex;flex-wrap:wrap;gap:10px}";
+  (document.head||document.documentElement).appendChild(css);
+
+  document.addEventListener("click",async e=>{
+    const b=e.target.closest("[data-fs]");if(!b||!C)return;const U=ST.ui;
+    switch(b.dataset.fs){
+      case"sync":ST.ready?FS.syncNow().then(rerender):FS.syncStart();rerender();break;
+      case"out":await FS.signOut();ST.ready=false;ST.last=null;ST.err=null;ST.ui={};rerender();break;
+      case"kids":try{U.kids=await FS.familyMembers();U.kidMsg=null;}catch(err){U.kidMsg="Gerade nicht möglich: "+netErr(err);}rerender();break;
+      case"kid":try{const r=await FS.pull(C.app,b.dataset.id);
+          if(!r){U.kidMsg=b.dataset.name+" hat hier noch keinen Stand im Familienspeicher.";rerender();}
+          else{U.kidMsg=null;C.showChild(r.data,{name:b.dataset.name,at:new Date(r.updated_at)});}
+        }catch(err){U.kidMsg="Gerade nicht abrufbar: "+netErr(err);rerender();}break;
+    }
+  });
+  document.addEventListener("submit",e=>{
+    if(!C||e.target.id!=="fs-login")return;e.preventDefault();e.stopPropagation();
+    const U=ST.ui,mail=document.getElementById("fs-mail").value,pw=document.getElementById("fs-pw").value;
+    U.busy=true;U.err=null;U.mail=mail;rerender();
+    FS.signIn(mail,pw).then(async m=>{U.busy=false;
+      if(!m){U.err="Angemeldet, aber das Konto gehört noch zu keiner Familie.";rerender();return;}
+      if(m.role==="parent"){try{U.kids=await FS.familyMembers();}catch(err){}}
+      await FS.syncStart();
+    }).catch(err=>{U.busy=false;U.err=err.message;rerender();});
+  },true);
+
   window.FamilieSync=FS;
   addEventListener("online",()=>FS.flush());
 })();
