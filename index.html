@@ -315,6 +315,24 @@ label.lbl,.lbl{font-weight:800;display:block;margin-bottom:6px}
 @keyframes blimp{from{transform:translateX(-24px)}to{transform:translateX(172px)}}
 .firework>g{animation:fw 2.4s steps(1) infinite}
 @keyframes fw{0%,25%{opacity:0}26%,60%{opacity:1}61%,100%{opacity:0}}
+/* Tie-Break */
+.btn[disabled]{opacity:.5;cursor:default;box-shadow:inset 0 -5px 0 var(--accent-dark),1px 1px 0 var(--line)}
+.mode.tb{grid-column:1/-1;min-height:0;background:var(--deu);box-shadow:inset 0 -6px 0 rgba(0,0,0,.22),3px 3px 0 var(--line)}
+.mode.tb.done{background:var(--panel);color:var(--ink)}
+.tb-anlass{font-weight:800;font-size:1.1rem;line-height:1.4;margin:0}
+textarea.inp.tb-text{min-height:190px;font-size:1.1rem;font-weight:600;line-height:1.55;resize:vertical;font-family:inherit}
+.tb-prog{font-family:var(--f-display);font-size:.9rem;margin-top:10px;color:var(--muted)}
+.tb-textbox{font-size:1.15rem;line-height:2;font-weight:600}
+.tb-s{padding:2px 2px;border-radius:2px}
+.tb-s sup{font-family:var(--f-display);font-size:.65rem;color:var(--muted);margin-right:2px}
+.tb-s.cur{background:color-mix(in srgb,var(--deu) 16%,transparent);outline:2px dashed var(--deu);outline-offset:2px}
+.tb-w{font:inherit;color:inherit}
+.tb-w.tap{all:unset;cursor:pointer;border-bottom:3px dotted var(--deu);padding:0 1px}
+.tb-w.tap:active{background:color-mix(in srgb,var(--deu) 30%,transparent)}
+.tb-w.mark{background:#f6e05a;color:#1d2a17;padding:0 3px;box-shadow:0 0 0 2px #1d2a17}
+.tb-w.fixed{color:var(--green);font-weight:800;border-bottom:3px solid var(--green)}
+.tb-solution{font-family:var(--f-display);font-size:1.8rem;text-align:center;margin:0;color:var(--green)}
+.tb-final{font-size:1.1rem;line-height:1.7;font-weight:600;margin:0}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -345,7 +363,7 @@ const KEY="lern-match-v1",OLD_KEY="fennek-lernoase-v1";let memStore=null,storeOk
 function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):null;}catch(e){storeOk=false;return memStore;}}
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storeOk=false;memStore=JSON.parse(JSON.stringify(S));}}
 function save(){S.savedAt=Date.now();saveLocal();SYNC.later();}
-function blank(){return {v:1,name:"",aceName:"Ace",lobName:"Lobbi",sound:true,pitch:1.6,voice:"",newPerDay:5,len:"normal",balls:0,missions:{},days:{},m:{},en:{},de:{},hist:{},quiz:{},qn:0,eg:{},titles:{},slams:{},gsN:0,gsTotal:0,mk:2,enUnit:null,paused:null,setupDone:false,imported:false};}
+function blank(){return {v:1,name:"",aceName:"Ace",lobName:"Lobbi",sound:true,pitch:1.6,voice:"",newPerDay:5,len:"normal",balls:0,missions:{},days:{},m:{},en:{},de:{},hist:{},quiz:{},qn:0,eg:{},titles:{},slams:{},gsN:0,gsTotal:0,mk:2,enUnit:null,paused:null,tb:{},tbRun:null,tbDraft:null,setupDone:false,imported:false};}
 let S=Object.assign(blank(),load()||{});
 /* Lernstand aus Fenneks Lern-Oase: liegt auf derselben Webadresse, daher hier lesbar */
 function oldData(){try{const t=localStorage.getItem(OLD_KEY);if(!t)return null;const o=JSON.parse(t);return o&&typeof o==="object"?o:null;}catch(e){return null;}}
@@ -912,13 +930,135 @@ function homeLines(){
   return [`${greet}${nm}! ${L[new Date().getDate()%L.length]}`,`Heute gibt's ${nextItem()} für deinen Platz. Kurzes Training oder großes Grand-Slam-Match?`];
 }
 
+/* ---------- Tie-Break: kurzer Schreibteil nach dem Match ----------
+   Philip schreibt ein paar Sätze zum Thema des Tages. Die Edge Function tiebreak-check findet Rechtschreibfehler,
+   verrät sie aber nicht: Er tippt das falsche Wort selbst an und verbessert es. Tipps gibt es in zwei Stufen. */
+const TBC=(window.INHALTE&&INHALTE.tiebreak)||{minWoerter:15,fokus:[],tage:{0:{thema:"Frei",em:"✏️",anlaesse:["Was hast du heute erlebt? Schreib drei Sätze."]}}};
+const TB_CAT={gross:"Groß und klein",doppel:"Doppelte Mitlaute",s:"s, ss oder ß",i:"i oder ie",ae:"e oder ä",ck:"k oder ck",tz:"z oder tz",dehnung:"Dehnungs-h",auslaut:"d/t oder g/k am Wortende",dass:"das oder dass",getrennt:"Zusammen oder getrennt",sonst:"Sonstiges"};
+const TB_HOW={selbst:"selbst gefunden",tipp:"mit Tipp",tipp2:"mit 2 Tipps",geloest:"Lösung gezeigt"};
+const TB_L=/[A-Za-zÄÖÜäöüß]/;
+function tbDay(){const T=TBC.tage||{};return T[new Date().getDay()]||T[0]||{thema:"Frei",em:"✏️",anlaesse:["Was hast du heute erlebt?"]};}
+function tbAnlass(off){const a=tbDay().anlaesse||[];const n=Math.floor((Date.now()-new Date().getTimezoneOffset()*6e4)/864e5);return a.length?a[(n+(off||0))%a.length]:"";}
+function tbDone(){return !!(S.tb&&S.tb.days&&S.tb.days[today()]);}
+function tbWords(t){return (String(t).match(/[A-Za-zÄÖÜäöüß]+/g)||[]).length;}
+function tbSplit(text){return (String(text).replace(/\s+/g," ").match(/[^.!?]+(?:[.!?]+|$)/g)||[]).map(s=>s.trim()).filter(s=>TB_L.test(s));}
+function tbTok(s){return s.split(/([A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)*)/).filter(x=>x!=="").map(x=>({t:x,w:TB_L.test(x[0])}));}
+function tbLocate(toks,wrong){const want=String(wrong).split(/\s+/).filter(Boolean),wi=toks.map((x,i)=>x.w?i:-1).filter(i=>i>=0);if(!want.length)return null;
+  for(const ci of [false,true])for(let k=0;k+want.length<=wi.length;k++){let ok=true;for(let j=0;j<want.length;j++){const a=toks[wi[k+j]].t,b=want[j];if(ci?a.toLowerCase()!==b.toLowerCase():a!==b){ok=false;break;}}if(ok)return wi.slice(k,k+want.length);}
+  return null;}
+function tbCur(){const T=UI.tb;return T&&T.errs?T.errs[T.cur]:null;}
+function tbFixMap(T,si,blank){const fx={};(T.errs||[]).forEach(x=>{if(x.si===si&&x.fixed)x.idx.forEach((k,j)=>fx[k]=j===0?x.correct:blank);});return fx;}
+function tbFinal(T){return (T.sents||[]).map((st,si)=>{const fx=tbFixMap(T,si,"");return st.toks.map((tk,i)=>fx[i]!=null?fx[i]:tk.t).join("");}).join(" ").replace(/\s+/g," ").trim()||T.text;}
+function tbFinalHTML(T){if(!T.sents)return esc(T.text);return T.sents.map((st,si)=>{const fx=tbFixMap(T,si,null);return st.toks.map((tk,i)=>fx[i]===null?"":fx[i]!=null?`<span class="tb-w fixed">${esc(fx[i])}</span>`:esc(tk.t)).join("");}).join(" ");}
+function tbStart(){
+  const R=S.tbRun&&S.tbRun.d===today()&&S.tbRun.errs?S.tbRun:null;
+  if(R)UI.tb=R;
+  else{const dr=S.tbDraft&&S.tbDraft.d===today()?S.tbDraft:null;UI.tb={d:today(),phase:"write",off:dr?dr.off||0:0,text:dr?dr.text||"":"",started:Date.now()};}
+  UI.view="tb";render();snd("tap");}
+async function tbCheck(){
+  const T=UI.tb,min=TBC.minWoerter||15,F=window.FamilieSync;if(!T||T.phase!=="write")return;
+  if(tbWords(T.text)<min){T.msg=`Schreib noch ein bisschen weiter. Mindestens ${min} Wörter!`;render();return;}
+  if(!F||!F.session()){T.msg="Für die Prüfung muss im Eltern-Tab jemand angemeldet sein. Dein Text bleibt gespeichert.";render();return;}
+  const sents=tbSplit(T.text);
+  if(sents.length>12||sents.join(" ").length>900){T.msg="Der Text ist zu lang für den Tie-Break. Kürze ihn ein bisschen.";render();return;}
+  const D=tbDay();T.thema=D.thema;T.em=D.em;T.anlass=tbAnlass(T.off);T.phase="checking";T.msg=null;render();
+  try{
+    const r=await F.fn("tiebreak-check",{sentences:sents,topic:D.thema+": "+T.anlass,focus:TBC.fokus||[]});
+    T.sents=sents.map(s=>({s,toks:tbTok(s)}));
+    T.errs=(r&&r.errors||[]).map(e=>{const st=T.sents[e.sentence-1],idx=st&&tbLocate(st.toks,e.wrong);
+      return idx?{si:e.sentence-1,idx,wrong:e.wrong,correct:e.correct,category:e.category,hint_type:e.hint_type,hint_strategy:e.hint_strategy,explanation:e.explanation,lvl:0,found:false,foundAt:null,fixed:false,solved:false,tries:0,miss:0,how:null,input:e.wrong}:null;})
+      .filter(Boolean).sort((a,b)=>a.si-b.si||a.idx[0]-b.idx[0]);
+    T.reply=(r&&r.reply)||"";T.cur=0;T.pts=0;T.note=null;
+    if(!T.errs.length){tbFinish(T);return;}
+    T.phase="fix";S.tbRun=T;save();
+    if(UI.tb===T&&UI.view==="tb"){render();snd("pop");}
+  }catch(e){T.phase="write";T.msg=(navigator.onLine===false||e instanceof TypeError)?"Gerade kein Internet. Dein Text bleibt gespeichert, probier es gleich nochmal.":e.message;if(UI.tb===T&&UI.view==="tb")render();}
+}
+function tbTap(si,wi,ev){
+  const T=UI.tb,e=tbCur();if(!e||e.found||e.fixed||si!==e.si)return;
+  if(e.idx.includes(wi)){e.found=true;e.foundAt=e.lvl;T.note=null;snd("right");render();fx($(".tb-w.mark"),"hop");const ip=$("#tb-fix-in");if(ip)setTimeout(()=>{ip.focus();ip.setSelectionRange(ip.value.length,ip.value.length);},60);}
+  else{e.miss++;const w=T.sents[si].toks[wi].t;T.note=`„${w}“ ist richtig geschrieben. Such weiter!`+(e.miss>=2&&e.lvl<2?" Ein Tipp hilft dir.":"");snd("wrong");render();}
+}
+function tbHint(){const T=UI.tb,e=tbCur();if(!e||e.fixed||e.solved)return;if(e.lvl<2)e.lvl++;if(e.lvl===2&&!e.found){e.found=true;e.foundAt=2;}T.note=null;S.tbRun=T;saveLocal();render();snd("tap");
+  const ip=$("#tb-fix-in");if(ip&&e.found)setTimeout(()=>ip.focus(),60);}
+function tbSolve(){const T=UI.tb,e=tbCur();if(!e||e.fixed)return;e.found=true;e.solved=true;if(e.foundAt==null)e.foundAt=3;e.input="";T.note="So schreibt man es richtig. Schreib es einmal ab, dann merkt es sich dein Kopf besser.";render();const ip=$("#tb-fix-in");if(ip)setTimeout(()=>ip.focus(),60);}
+function tbFix(val){
+  const T=UI.tb,e=tbCur();if(!e||!e.found||e.fixed)return;const v=String(val).trim().replace(/\s+/g," ");if(!v)return;
+  if(v===e.correct){e.fixed=true;let p=0;if(e.solved)e.how="geloest";else{e.how=e.foundAt===0?"selbst":e.foundAt===1?"tipp":"tipp2";p=e.foundAt===0?3:e.foundAt===1?2:1;}
+    T.pts+=p;S.balls+=p;T.note=null;S.tbRun=T;save();snd(p?"right":"pop");render();if(p)flyer(innerWidth/2,innerHeight/2,p);return;}
+  e.input=v;
+  if(e.solved){T.note="Schau genau hin und schreib es genau so ab, wie es oben steht.";snd("wrong");render();return;}
+  e.tries++;snd("wrong");
+  T.note=e.tries>=3?"Das ist knifflig. Du kannst dir die Lösung zeigen lassen.":e.tries===2&&e.lvl<2?"Noch nicht ganz. Hol dir ruhig einen Tipp!":"Noch nicht ganz. Schau nochmal genau hin.";
+  render();
+}
+function tbNext(){const T=UI.tb;T.cur++;T.note=null;if(T.cur>=T.errs.length){tbFinish(T);return;}S.tbRun=T;save();render();window.scrollTo(0,0);snd("pock");}
+function tbFinish(T){
+  const t=today(),errs=T.errs||[],self=errs.filter(e=>e.how==="selbst").length,words=tbWords(T.text);
+  const bonus=errs.length?5:10;T.pts=(T.pts||0)+bonus;S.balls+=bonus;
+  const tb=S.tb||(S.tb={});tb.days=tb.days||{};tb.cats=tb.cats||{};tb.entries=tb.entries||[];
+  tb.days[t]={thema:T.thema,w:words,f:errs.length,s:self};
+  errs.forEach(e=>{const c=tb.cats[e.category]||(tb.cats[e.category]={n:0,s:0});c.n++;if(e.how==="selbst")c.s++;});
+  tb.entries.unshift({d:t,thema:T.thema,anlass:T.anlass,text:T.text,final:tbFinal(T),f:errs.map(e=>({w:e.wrong,c:e.correct,k:e.category,h:e.how}))});tb.entries=tb.entries.slice(0,30);
+  S.tbRun=null;S.tbDraft=null;T.phase="done";
+  try{if(window.FamilieSync)FamilieSync.log(APP_ID,"tiebreak",{thema:T.thema,woerter:words,fehler:errs.length,selbst:self,geloest:errs.filter(e=>e.how==="geloest").length,kategorien:errs.map(e=>e.category),baelle:T.pts,minuten:T.started?Math.round((Date.now()-T.started)/6000)/10:null});}catch(e){}
+  save();
+  if(UI.tb===T&&UI.view==="tb"){render();snd("fanfare");rain();}
+}
+function tbTextHTML(T){const e=tbCur();
+  return T.sents.map((st,si)=>{const fx=tbFixMap(T,si,null),active=e&&!e.found&&!e.fixed&&si===e.si,mark=e&&e.si===si&&e.found&&!e.fixed?e.idx:[];
+    const parts=st.toks.map((tk,i)=>{if(fx[i]===null)return "";if(fx[i]!=null)return `<span class="tb-w fixed">${esc(fx[i])}</span>`;
+      if(tk.w&&active)return `<button class="tb-w tap" data-act="tb-tap" data-s="${si}" data-i="${i}">${esc(tk.t)}</button>`;
+      if(tk.w&&mark.includes(i))return `<span class="tb-w mark">${esc(tk.t)}</span>`;
+      return esc(tk.t);}).join("");
+    return `<span class="tb-s ${active?"cur":""}"><sup>${si+1}</sup>${parts}</span>`;}).join(" ");}
+function tbCardHTML(){const D=tbDay(),done=tbDone(),R=S.tbRun&&S.tbRun.d===today()&&S.tbRun.errs;
+  return `<button class="mode tb ${done?"done":""}" data-act="tb-start"><span class="mt">${done?"Tie-Break geschafft ✓":R?"Tie-Break weiterspielen":"Tie-Break"}</span><span class="md">${D.em} ${esc(D.thema)} · ein paar Sätze schreiben</span><span class="md">${done?"Noch einen schreiben? Gern!":"ca. 5 Min. · Bälle für jeden selbst gefundenen Fehler"}</span></button>`;}
+function vTB(){
+  const T=UI.tb,D=tbDay();
+  const top=`<div class="topbar"><button class="linkbtn" data-act="tb-quit">← ${T.phase==="done"?"Zurück":"Pause"}</button><span class="tag" style="--c:var(--deu)">Tie-Break · ${T.em||D.em} ${esc(T.thema||D.thema)}</span></div>`;
+  if(T.phase==="write"||T.phase==="checking"){
+    const an=tbAnlass(T.off),n=tbWords(T.text),min=TBC.minWoerter||15,busy=T.phase==="checking";
+    return top+`<div class="duo" style="margin-top:12px">${lineHTML("lob",busy?`${AN()} liest deinen Text. Einen Moment …`:"Tie-Break! Jetzt wird geschrieben. Lass dir Zeit, keiner hetzt dich.",{still:busy})}</div>
+    <div class="panel stack" style="margin-top:14px"><p class="small muted" style="margin:0">Dein Schreibanlass</p><p class="tb-anlass">${esc(an)}</p>
+     <textarea class="inp tb-text" id="tb-in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Schreib hier in ganzen Sätzen …" ${busy?"disabled":""}>${esc(T.text)}</textarea>
+     <div class="row" style="justify-content:space-between"><span class="small muted" id="tb-count">${n} ${n===1?"Wort":"Wörter"} · mindestens ${min}</span>${busy?"":`<button class="chip" data-act="tb-other">Anderer Anlass</button>`}</div>
+     ${T.msg?`<p class="note">${esc(T.msg)}</p>`:""}
+     <button class="btn big green" data-act="tb-check" id="tb-go" ${busy||n<min?"disabled":""}>${busy?"Wird geprüft …":"Fertig – prüfen lassen"}</button></div>`;
+  }
+  if(T.phase==="fix"){
+    const e=T.errs[T.cur],tot=T.errs.length;let lob;
+    if(e.fixed)lob=e.how==="geloest"?"Gut abgeschrieben! Weiter geht's.":e.how==="selbst"?pickA(["Ganz allein gefunden und verbessert! Stark!","Volltreffer! Das war ein Ass!","Super, selbst entdeckt!"]):pickA(["Verbessert! Gut gemacht.","Genau so!","Klasse, jetzt stimmt es!"]);
+    else if(!e.found)lob=T.cur===0&&tot>1?`Ich hab ${tot} Fehler entdeckt. Der erste versteckt sich in Satz ${e.si+1}. Tipp das Wort an!`:T.cur===0?`Ich hab einen Fehler entdeckt. Er versteckt sich in Satz ${e.si+1}. Tipp das Wort an!`:`Der nächste Fehler versteckt sich in Satz ${e.si+1}. Findest du ihn?`;
+    else lob=e.solved?"Schreib das Wort einmal richtig ab.":e.foundAt===2?"Das markierte Wort ist falsch. Wie schreibt man es richtig?":"Gefunden! Wie schreibt man es richtig?";
+    const hints=[e.lvl>=1&&!e.fixed?e.hint_type:null,e.lvl>=2&&!e.fixed?e.hint_strategy:null].filter(Boolean);
+    return top+`<div class="tb-prog">Fehler ${T.cur+1} von ${tot}</div>
+    ${T.cur===0&&T.reply&&!e.found&&e.lvl===0&&!e.miss?`<div class="duo" style="margin-top:10px">${lineHTML("ace",T.reply)}</div>`:""}
+    <div class="duo" style="margin-top:10px">${lineHTML("lob",lob)}</div>
+    <div class="panel tb-textbox" style="margin-top:14px">${tbTextHTML(T)}</div>
+    ${hints.length?`<div class="duo" style="margin-top:12px">${hints.map(h=>lineHTML("ace",h,{still:true})).join("")}</div>`:""}
+    ${T.note?`<p class="note" style="margin-top:12px">${esc(T.note)}</p>`:""}
+    <div class="stack" style="margin-top:14px">
+    ${e.fixed?`${lineHTML("ace",`<span class="who">${esc(AN())}</span><b class="big">${esc(e.correct)}</b>${e.explanation?`<span class="ex">${esc(e.explanation)}</span>`:""}`,{html:true,res:"ok"})}<button class="btn big green" data-act="tb-next">${T.cur>=tot-1?"Tie-Break beenden":"Nächster Fehler"}</button>`
+     :e.found?`${e.solved?`<p class="tb-solution">${esc(e.correct)}</p>`:""}<form id="tb-fix" class="stack"><input class="inp" id="tb-fix-in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" value="${esc(e.solved?"":e.input)}" aria-label="Verbessertes Wort"><button class="btn big" type="submit">Verbessern</button></form>`:""}
+    ${!e.fixed&&!e.solved?`<div class="row" style="justify-content:center">${e.lvl<2?`<button class="btn ghost" data-act="tb-hint">💡 Tipp ${e.lvl+1}</button>`:""}${e.lvl>=2||e.tries>=3?`<button class="btn ghost" data-act="tb-solve">Lösung zeigen</button>`:""}</div>`:""}
+    </div>`;
+  }
+  const errs=T.errs||[],self=errs.filter(x=>x.how==="selbst").length;
+  const l1=!errs.length?"Fehlerfrei! Das war ein glattes Ass!":self===errs.length?(errs.length===1?"Den Fehler hast du ganz allein gefunden! Stark!":`Alle ${errs.length} Fehler ganz allein gefunden! Stark!`):`Tie-Break gewonnen! ${self} von ${errs.length} Fehlern hast du ganz allein gefunden.`;
+  return top+`<div class="duo" style="margin-top:14px">${!errs.length&&T.reply?lineHTML("ace",T.reply):""}${lineHTML("lob",l1)}</div>
+   <section class="panel stack" style="margin-top:14px"><p class="small muted" style="margin:0">Dein Text${errs.length?", verbessert":""}</p><p class="tb-final">${tbFinalHTML(T)}</p></section>
+   <section class="panel stack" style="align-items:center;text-align:center;gap:6px;margin-top:14px"><div class="row" style="justify-content:center">${ballSVG()}<span class="big-num">+${T.pts}</span></div><p style="margin:0"><b>Bälle für deinen Korb</b>${!errs.length?"<br>Fehlerfrei-Bonus inklusive!":""}</p></section>
+   <button class="btn big green" data-act="home" style="margin-top:14px;width:100%">Zum Tennisplatz</button>`;
+}
+
 /* ---------- Ansichten ---------- */
 function render(){
   const app=$("#app");
   if(!S.setupDone){app.innerHTML=vSetup();$("#tabs").innerHTML="";after();return;}
   const v=UI.view;
-  app.innerHTML=v==="task"?vTask():v==="done"?vDone():v==="woerter"?vWords():v==="eltern"?vParents():vHome();
-  $("#tabs").innerHTML=(v==="task")?"":tabs();
+  app.innerHTML=v==="tb"&&UI.tb?vTB():v==="task"?vTask():v==="done"?vDone():v==="woerter"?vWords():v==="eltern"?vParents():vHome();
+  $("#tabs").innerHTML=(v==="task"||(v==="tb"&&UI.tb))?"":tabs();
   after();
 }
 function after(){UI.anim=false;typeAll();if(UI.view!=="task")window.scrollTo(0,0);const ip=$("#en-in");if(ip&&!UI.answered)setTimeout(()=>ip.focus(),60);}
@@ -976,6 +1116,7 @@ function vHome(){
     <button class="mode train" data-act="start" data-type="mission"><span class="mt">Trainings&shy;match</span><span class="md">3 Sätze · ca. 12 Min.</span><span class="md">Mathe, Englisch, Deutsch</span></button>
     <button class="mode slam" data-act="start" data-type="slam" style="--tc:${T.court};--tc2:${T.court2}"><span class="mt">Grand-Slam-Match</span><span class="md">5 Sätze · ca. 25 Min.</span><span class="md">${esc(T.n)}${slamDone?"":" · Pokal + 25 Bälle"}</span></button>
    </div>
+   ${tbCardHTML()}
    <p class="small muted" style="text-align:center;margin-top:-4px">${done?"Heute schon gespielt. Jedes weitere Match bringt trotzdem Bälle.":"Beide Matches bringen heute ein neues Teil für deinen Platz."}</p>
    ${cupsHTML()}
    ${quizHTML()}
@@ -1096,6 +1237,7 @@ function vDone(){
     <div class="row" style="justify-content:center">${ballSVG()}<span class="big-num">+${r.earned}</span></div>
     <p><b>Bälle für deinen Korb</b>${r.title?"<br>Grand-Slam-Bonus: 25 Bälle!":""}${r.weekBonus?"<br>Wochenziel geschafft: 25 Bonus-Bälle!":""}</p>
    </section>
+   ${isM&&!tbDone()?`<section class="panel stack"><div class="duo">${lineHTML("lob",`Noch fünf Minuten für den Tie-Break? Heute ist ${tbDay().thema}-Tag!`,{still:true})}</div><button class="btn big" data-act="tb-start">${tbDay().em} Zum Tie-Break</button></section>`:""}
    <button class="btn big green" data-act="home">Zum Tennisplatz</button>
   </div>`;
 }
@@ -1123,9 +1265,21 @@ function report(){
   const L=[`Lern-Match · Wochenbericht${S.name?" für "+S.name:""}`,`Trainingstage in den letzten 7 Tagen: ${days} · insgesamt: ${Object.keys(S.days).length}`,`Davon Grand-Slam-Tage: ${slams} · Pokale: ${TOURN.map(T=>T.short+" "+(S.titles[T.k]||0)).join(", ")}`,"",
     `Mathe: ${pct(sum.m)} · Schwerpunkt ${(KAP[S.mk]||KAP[2]).n}`,`  Stufen: ${used.map(k=>SKILLS[k]+" "+lvl(k)).join(", ")||"noch keine"}`,weakM.length?`  Noch unsicher: ${weakM.join(", ")}`:"  Keine Schwachstelle auffällig.","",
     `Englisch: ${pct(sum.e)}`,`  Vokabeln: ${known} sicher, ${started} angefangen, ${WORDS.length} insgesamt`,hardW.length?`  Schwierige Wörter: ${hardW.slice(0,12).join(", ")}`:"",`  Grammatik: ${egOk} von ${EG.length} Satzaufgaben sicher${egWeak?`, ${egWeak} zuletzt falsch`:""}`,"",
-    `Deutsch: ${pct(sum.d)}`,Object.keys(deWeak).length?`  Zuletzt falsch bei: ${Object.entries(deWeak).map(([k,v])=>k+" ("+v+")").join(", ")}`:"  Keine Schwachstelle auffällig."];
+    `Deutsch: ${pct(sum.d)}`,Object.keys(deWeak).length?`  Zuletzt falsch bei: ${Object.entries(deWeak).map(([k,v])=>k+" ("+v+")").join(", ")}`:"  Keine Schwachstelle auffällig.","",...tbReport(keys)];
   return L.filter((x,i,a)=>!(x===""&&a[i-1]==="")).join("\n");
 }
+function tbReport(keys){
+  const tb=S.tb||{},D=tb.days||{},td=keys.filter(k=>D[k]);
+  const L=[`Tie-Break (freies Schreiben): ${td.length} ${td.length===1?"Tag":"Tage"} in den letzten 7 Tagen`];
+  if(!td.length&&!(tb.entries||[]).length)return L.concat(["  Noch kein Text geschrieben."]);
+  const f=td.reduce((a,k)=>a+(D[k].f||0),0),s=td.reduce((a,k)=>a+(D[k].s||0),0),w=td.reduce((a,k)=>a+(D[k].w||0),0);
+  if(td.length)L.push(`  ${w} Wörter geschrieben, ${f} Fehler, davon ${s} ganz allein gefunden`);
+  const cats=Object.entries(tb.cats||{}).sort((a,b)=>b[1].n-a[1].n).slice(0,4);
+  if(cats.length)L.push(`  Häufigste Fehlerarten bisher: ${cats.map(([k,v])=>(TB_CAT[k]||k)+" ("+v.n+")").join(", ")}`);
+  (tb.entries||[]).slice(0,3).forEach(e=>{
+    L.push("",`  ${new Date(e.d+"T12:00:00").toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"numeric"})} · ${e.thema||""}: ${e.anlass||""}`,`  „${e.final||e.text}“`);
+    if(e.f&&e.f.length)L.push(`  Fehler: ${e.f.map(x=>x.w+" → "+x.c+" ("+(TB_HOW[x.h]||"offen")+")").join(", ")}`);});
+  return L;}
 function vSync(){
   const F=window.FamilieSync,s=F&&F.session(),m=F&&F.member();
   if(!F)return "";
@@ -1184,6 +1338,14 @@ document.addEventListener("click",async ev=>{
    case"tab":UI.view=b.dataset.id;render();break;
    case"home":UI.view="home";render();break;
    case"start":startRun(b.dataset.type);break;
+   case"tb-start":tbStart();break;
+   case"tb-other":if(UI.tb){UI.tb.off=(UI.tb.off||0)+1;UI.tb.msg=null;S.tbDraft={d:today(),text:UI.tb.text,off:UI.tb.off};saveLocal();render();snd("tap");}break;
+   case"tb-check":tbCheck();break;
+   case"tb-tap":tbTap(+b.dataset.s,+b.dataset.i,ev);break;
+   case"tb-hint":tbHint();break;
+   case"tb-solve":tbSolve();break;
+   case"tb-next":tbNext();break;
+   case"tb-quit":{const T=UI.tb;if(T&&T.phase==="fix"){S.tbRun=T;save();}UI.view="home";UI.tb=null;render();if(T&&T.phase!=="done")toast("Tie-Break pausiert. Du kannst heute weitermachen.");break;}
    case"resume":{const P=pausedRun();if(!P)break;UI.run=P.run;UI.view="task";UI.input="";UI.answered=null;render();snd("tap");introVoice();break;}
    case"view":UI.sceneView=b.dataset.v;render();break;
    case"mk":S.mk=+b.dataset.v;save();render();break;
@@ -1232,9 +1394,14 @@ document.addEventListener("submit",ev=>{
       if(m.role==="parent"){try{UI.sbKids=await FamilieSync.familyMembers();}catch(e){}}
       toast("Hallo "+m.display_name+"!");await SYNC.start();render();
     }).catch(e=>{UI.sbBusy=false;UI.sbErr=e.message;render();});return;}
+  if(ev.target.id==="tb-fix"){tbFix($("#tb-fix-in").value);return;}
   if(ev.target.id==="en-form"){const v=$("#en-in").value;if(!v.trim()){talk("Schreib zuerst ein Wort.");return;}answer(v,null);}
 });
-document.addEventListener("input",ev=>{if(ev.target.id==="en-in")UI.input=ev.target.value;});
+document.addEventListener("input",ev=>{if(ev.target.id==="en-in")UI.input=ev.target.value;
+  if(ev.target.id==="tb-in"&&UI.tb){const T=UI.tb;T.text=ev.target.value;const n=tbWords(T.text),min=TBC.minWoerter||15;
+    const c=$("#tb-count");if(c)c.textContent=`${n} ${n===1?"Wort":"Wörter"} · mindestens ${min}`;const g=$("#tb-go");if(g)g.disabled=n<min;
+    S.tbDraft={d:today(),text:T.text,off:T.off||0};saveLocal();}
+  if(ev.target.id==="tb-fix-in"){const e=tbCur();if(e)e.input=ev.target.value;}});
 document.addEventListener("change",ev=>{if(ev.target.id==="s-voice"){S.voice=ev.target.value;save();pickVoice();speak("Hello! Let's play tennis!");}});
 document.addEventListener("keydown",ev=>{
   if(UI.view!=="task")return;const t=cur();if(!t)return;

@@ -62,6 +62,8 @@
       const q=ls.get(QUEUE)||[];q.push({member_id:m.id,app,kind,value:value||{},occurred_at:new Date().toISOString()});ls.set(QUEUE,q.slice(-500));
       FS.flush();
     },
+    /* Ruft eine Edge Function im Familienspeicher auf (nur angemeldet), z. B. FS.fn("tiebreak-check",{…}). */
+    async fn(name,body){return req("/functions/v1/"+encodeURIComponent(name),{method:"POST",body:body||{}});},
     async flush(){
       const q=ls.get(QUEUE)||[];if(!q.length||!ls.get(SESS))return;
       try{await req("/rest/v1/activity_log",{method:"POST",headers:{Prefer:"return=minimal"},body:q});const rest=(ls.get(QUEUE)||[]).slice(q.length);ls.set(QUEUE,rest);}catch(e){}

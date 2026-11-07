@@ -365,5 +365,57 @@ window.INHALTE = {
     ["Welcher deutsche Spieler hat 2021 Olympia-Gold im Einzel gewonnen?", ["Alexander Zverev", "Boris Becker", "Michael Stich"], 0, "Alexander Zverev gewann bei den Spielen in Tokio die Goldmedaille."],
     ["Wie viele Grand-Slam-Titel im Einzel hat Steffi Graf gewonnen?", ["22", "5", "50"], 0, "Steffi Graf hat 22 Grand-Slam-Turniere im Einzel gewonnen."],
     ["Warum springen Tennisbälle auf Sand langsamer ab als auf Hartplatz?", ["Der Sand bremst den Ball", "Weil Sand nass ist", "Weil man dort leichtere Bälle nimmt"], 0, "Der weiche Sand bremst den Ball. Darum dauern die Ballwechsel auf Sand oft länger."]
-  ]
+  ],
+
+  /* Tie-Break: kurzer Schreibteil nach dem Match. Jeder Wochentag hat ein Thema.
+     fokus: leer = alle Fehlerarten. Sobald das Fehlerprofil steht, z. B. ["gross","doppel"].
+     Mögliche Werte: gross, doppel, s, i, ae, ck, tz, dehnung, auslaut, dass, getrennt, sonst */
+  tiebreak: {
+    fokus: [],
+    minWoerter: 15,
+    tage: {
+      1: { thema: "Bio", em: "🐕", anlaesse: [
+        "Warum hecheln Hunde? Erkläre es in zwei oder drei Sätzen.",
+        "Wie erkundet ein Hund mit seiner Nase die Welt? Beschreibe es.",
+        "Wie zeigt ein Hund, dass er sich freut oder Angst hat?",
+        "Was braucht ein Hund, damit es ihm gut geht?",
+        "Der Hund stammt vom Wolf ab. Was haben die beiden gemeinsam?",
+        "Warum können Hunde so gut hören? Erkläre es Lobbi."
+      ]},
+      2: { thema: "Erdkunde", em: "🗺️", anlaesse: [
+        "Beschreibe deinen Schulweg. Benutze dabei Himmelsrichtungen.",
+        "Was steht in der Legende einer Karte? Erkläre es Lobbi.",
+        "Beschreibe eine Landschaft, die du im Urlaub gesehen hast.",
+        "Warum gibt es auf der Erde Tag und Nacht?",
+        "Was ist der Unterschied zwischen einer Stadt und einem Dorf?",
+        "Woran erkennt man auf einer Karte, ob es bergig ist?"
+      ]},
+      3: { thema: "Mathe", em: "🔢", anlaesse: [
+        "Im Tenniscamp sind 24 Kinder auf 6 Plätzen, auf jedem gleich viele. Wie viele Kinder spielen auf einem Platz? Schreib die Rechnung und einen Antwortsatz.",
+        "Eine Dose hat 4 Tennisbälle. Der Trainer kauft 15 Dosen. Wie viele Bälle hat er? Schreib die Rechnung und einen Antwortsatz.",
+        "Das Training beginnt um 15:30 Uhr und dauert 90 Minuten. Wann ist es zu Ende? Schreib einen Antwortsatz und erkläre, wie du gerechnet hast.",
+        "Ein Schläger kostet 89 Euro, eine Tasche 35 Euro. Philip hat 150 Euro. Reicht das Geld für beides? Erkläre es in ganzen Sätzen.",
+        "Erkläre Lobbi in zwei Sätzen, wie man schriftlich addiert."
+      ]},
+      4: { thema: "Tennis", em: "🎾", anlaesse: [
+        "Schreib einen kurzen Matchbericht von deinem letzten Training oder Spiel.",
+        "Lobbi will Tennis lernen. Erkläre ihm, wie ein guter Aufschlag geht.",
+        "Erfinde den Anfang einer Geschichte: Ace und Lobbi verlaufen sich in Wimbledon …",
+        "Was war dein bester Schlag in dieser Woche? Beschreibe ihn.",
+        "Warum macht dir Tennis Spaß? Schreib drei Gründe auf."
+      ]},
+      5: { thema: "Detektiv", em: "🔍", anlaesse: [
+        "Erzähl, wie du deinen letzten Spürnase-Fall gelöst hast.",
+        "Ermittlungsbericht: Im Clubhaus ist der Pokal verschwunden. Was hast du entdeckt?",
+        "Beschreibe einen Verdächtigen so genau, dass die Polizei ihn erkennen würde.",
+        "Auf dem Tennisplatz liegen seltsame Spuren. Was könnte passiert sein?",
+        "Schreib eine geheime Nachricht an Ace, damit nur er sie versteht, und erkläre den Trick."
+      ]},
+      0: { thema: "Frei", em: "✏️", anlaesse: [
+        "Was hast du heute erlebt? Schreib drei Sätze.",
+        "Was war das Schönste an dieser Woche?",
+        "Stell dir vor, du darfst einen Tag lang Tennisprofi sein. Was machst du?"
+      ]}
+    }
+  }
 };
