@@ -325,6 +325,7 @@ label.lbl,.lbl{font-weight:800;display:block;margin-bottom:6px}
 <div id="layer"></div>
 
 <script src="inhalte.js"></script>
+<script src="familie-sync.js"></script>
 <script>
 "use strict";
 /* ---------- Grundlagen ---------- */
@@ -342,7 +343,8 @@ function weekKeys(){const d=new Date();d.setHours(12,0,0,0);const wd=(d.getDay()
 /* ---------- Speicher ---------- */
 const KEY="lern-match-v1",OLD_KEY="fennek-lernoase-v1";let memStore=null,storeOk=true;
 function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):null;}catch(e){storeOk=false;return memStore;}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storeOk=false;memStore=JSON.parse(JSON.stringify(S));}}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storeOk=false;memStore=JSON.parse(JSON.stringify(S));}}
+function save(){S.savedAt=Date.now();saveLocal();SYNC.later();}
 function blank(){return {v:1,name:"",aceName:"Ace",lobName:"Lobbi",sound:true,pitch:1.6,voice:"",newPerDay:5,len:"normal",balls:0,missions:{},days:{},m:{},en:{},de:{},hist:{},quiz:{},qn:0,eg:{},titles:{},slams:{},gsN:0,gsTotal:0,mk:2,enUnit:null,paused:null,setupDone:false,imported:false};}
 let S=Object.assign(blank(),load()||{});
 /* Lernstand aus Fenneks Lern-Oase: liegt auf derselben Webadresse, daher hier lesbar */
@@ -354,6 +356,29 @@ function importOld(o){
   S.imported=true;UI.justImported={words:Object.keys(S.en).length,days:Object.keys(o.missions||{}).length,balls:o.dates||0};
 }
 const AN=()=>S.aceName||"Ace",LN=()=>S.lobName||"Lobbi";
+
+/* ---------- Familienspeicher ----------
+   Der Stand liegt zuerst auf dem Gerät. Ist man angemeldet und Internet da, wird er mit Supabase abgeglichen.
+   Regel: Der neuere Stand (savedAt) gewinnt. Hochgeladen wird erst, nachdem einmal erfolgreich abgeglichen wurde,
+   damit ein leeres neues Gerät nie einen vorhandenen Stand überschreibt. */
+const APP_ID="lern-match";
+const netErr=e=>navigator.onLine===false||e instanceof TypeError?"Gerade kein Internet – wird später abgeglichen.":e.message;
+const SYNC={ready:false,busy:false,t:null,last:null,err:null,
+  fs(){return window.FamilieSync&&FamilieSync.session()?FamilieSync:null;},
+  async start(){const F=this.fs();if(!F||this.busy)return;this.busy=true;
+    try{let m=F.member()||await F.loadMember();if(!m){this.err="Dieses Konto ist noch keiner Familie zugeordnet.";return;}
+      const r=await F.pull(APP_ID);
+      if(r&&r.data&&(r.data.savedAt||0)>(S.savedAt||0)){S=Object.assign(blank(),r.data);saveLocal();if(UI.view!=="task")render();}
+      else if(S.setupDone)await F.push(APP_ID,S);
+      this.ready=true;this.err=null;this.last=new Date();F.flush();
+    }catch(e){this.err=netErr(e);}
+    finally{this.busy=false;if(UI.view==="eltern")render();}},
+  later(){if(!this.ready||!this.fs())return;clearTimeout(this.t);this.t=setTimeout(()=>this.now(),4000);},
+  async now(keep){const F=this.fs();if(!F||!this.ready)return this.start();clearTimeout(this.t);
+    try{await F.push(APP_ID,S,keep);this.last=new Date();this.err=null;}catch(e){this.err=netErr(e);}}
+};
+addEventListener("online",()=>SYNC.ready?SYNC.now():SYNC.start());
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")SYNC.now(true);else if(SYNC.fs())SYNC.start();});
 
 /* ---------- Pixel-Figuren (nach Philips Zeichnungen) ---------- */
 const MAPS={"ACE":["......oo.oo.oo......",".....oyyoyyoyyo.....","....ooyyyyyyyyoo....","...oyyyyyyyyyyyyo...","..owllyyyyyyyyyywo..","..owlyyyyyyyyyyywo..",".oywyyyyyyyyyyyywyo.",".oyywyyyyyyyyyywyyo.",".oyywyeeyyyyeeywyyo.",".oyywyeeyyyyeeywyyo.",".oyywyyyyyyyyyywyyo.",".oywyyyyyeyyyyyywyo.","..owyyyyyyyyyyyywo..","..owyyeyyyyyyeyywo..","...oyyyeeeeeeyyyo...","....oyyyyyyyyyyo....",".....ooyyyyyyoo.....",".......oooooo......."],"LOBBI":["..........h.hh..hh.h..........","........hhhhhhhhhhhhhh........",".......hhhHhhhhhhHhhhhh.......","......hhhhhhhhHhhhhhhhhh......","......hhHhhhhhhhhhhhhHhh......","......hhhhhhHhhhhhHhhhhh......","a.....hhyhhhyhhhyhhyhhho.....a","aa....ohyyhyyyhyyyhyyhwo....aa",".aa..oywyyyyyyyyyyyyyywyo..aa.","b.aa.oywyyyeeyyyyeeyyywyo.aa.b","bbbaaoywyyyeeyyyyeeyyywyoaabbb",".bbbcoywyyyyyyyyyyyyyywyocbbb.","...bboywyyyyyyeeyyyyyywyobb...",".....owyyyyyyyyyyyyyyyywo.....","......oyyeyyyyyyyyyyeyyo......","......oyyyeeyyyyyyeeyyyo......",".......oyyyeeeeeeeeyyyo.......","........ooyyyyyyyyyyoo........","..........oooooooooo..........","..........cc......cc..........","..........cc......cc..........","..........cc......cc..........","..........cc......cc..........",".........fff......fff........."],"JAY":["........................","........................",".........kkkkkkk........",".......kkmmmmmmmmk......",".....kkmmmmmmWWmmmkk....",".....kmmmmmmWWmmmmmk....","....kmmmmmmWWWWWmmmmk...","....kmmmmmmmmWWmmmmmk...","MkkkmmmmmmmmWWmmmmmmmkk.","MMMMMMMMMMMMMMMMMMMMMM..",".....kppppppppppppppk...","....kppppppppeeeeeeeek..","....kpppppppppppepeeek..","....kppppppppppppeeepk..","...kppppppppppppppppppk.","...kppppppppppepppppppk.","....kpppppppppepppeppk..","....kppppppppppeeepppk..","....kppppppppppppppppk..",".....kppppppppppppppk..."],"BO":["............k...........","..........kkhkk.........","........kkHhhHHkk.......","......kkhHhHHhhHhkk.....","....kkhhHhhHHhHhHHhkk...","..kkHHhHhHHhhHhhHHhHhkk.",".kkHhhHhhHHhHhHHhhHhhHkk","...kkkkHHhhHhhHHhHhkkk..",".......kHhHhHHhhHhk.....","......kssssssssssk......","......ksssssssessk......",".....kssssssseeessk.....",".....ksssqqsssssssk.....",".....kssssssessessk.....","......ksssssseessk......","......kssttttttssk......",".......ktttttttttk......",".....kktttttttttttkk....",".....ktttttttttttttk...."],"ROCKET":["..................kkkkkk......",".........kkkkkkkkkcCCccck.....","......kkkrrrrrrrkcCckkkcck....",".....krkrrrkrrrrkcccckcGck....","....krrkkrkkrrrrkcccckccck....","....krrkrkrkrrrrrkkkkkkkk.....","....krrkrrrkrrrrrrrrrrrrk.....",".....krrrrrrGrGrGrrrrrk.......","......kkrrrGrGrGrGrrkk........","........kkkkkkrrkkkk..........","..............rr..............","..f.Ff.FfYbbbbrbbbbbbbbbbbb...","FFfYYYYYYYbbbrrrrbbrrbbbbbbbb.",".FfYYYYYYYbbbrbbbrrbbbbbbbbb..","..F.fF.fYfbbbbbbbbbbbbbbbb...."],"FLAME2":[".f.F.fFf.Y","FfFYYYYYYY","FFfYYYYYYY",".F.fF.fFYf"]};
@@ -782,7 +807,7 @@ function startRun(type){
   const sets=setPlan(type);let tasks=[];
   sets.forEach((st,i)=>{if(st.g)tasks.push({intro:true,set:i});tasks=tasks.concat(setTasks(type,st.s).map(t=>Object.assign(t,{set:i})));});
   const sc=()=>({p:0,g:0,ok:0,n:0});
-  UI.run={type,sets,tasks,i:0,res:[],earned:0,requeued:{},score:sets.map(sc),rally:0,tour:type==="slam"?curTour():null};UI.view="task";UI.input="";UI.answered=null;
+  UI.run={type,started:Date.now(),sets,tasks,i:0,res:[],earned:0,requeued:{},score:sets.map(sc),rally:0,tour:type==="slam"?curTour():null};UI.view="task";UI.input="";UI.answered=null;
   keepRun();render();snd("tap");introVoice();
 }
 /* Ein laufendes Match wird mitgespeichert. Wird die App geschlossen, kann Philip am selben Tag weiterspielen. */
@@ -825,6 +850,9 @@ function finish(){
     const wk=weekKeys().filter(k=>S.days[k]).length,wkey="week-"+weekKeys()[0];if(wk>=5&&!S[wkey]){S[wkey]=true;S.balls+=25;r.earned+=25;r.weekBonus=true;}
     if(r.type==="slam"){S.gsTotal=(S.gsTotal||0)+1;if(!S.slams[t]){const T=r.tour;S.slams[t]=T.k;S.titles[T.k]=(S.titles[T.k]||0)+1;S.gsN=(S.gsN||0)+1;S.balls+=25;r.earned+=25;r.title=true;}}
     S.paused=null;}
+  try{const ok=r.res.filter(x=>x&&x!=="no").length,n=r.res.filter(Boolean).length;
+    if(window.FamilieSync)FamilieSync.log(APP_ID,"match",{typ:r.type,richtig:ok,aufgaben:n,baelle:r.earned,minuten:r.started?Math.round((Date.now()-r.started)/6000)/10:null,
+      faecher:Object.fromEntries(["m","e","d"].map(k=>{const h=(S.hist[t]||{})[k];return [k,h?{richtig:h[0],gesamt:h[1]}:null];}))});}catch(e){}
   save();UI.view="done";UI.done={newItem:newItem>=0&&newItem<COURT.length+ARENA.length?newItem:-1};render();
   snd("fanfare");rain();document.querySelectorAll(".scene .ch").forEach(c=>fx(c,"hop"));
 }
@@ -1098,12 +1126,33 @@ function report(){
     `Deutsch: ${pct(sum.d)}`,Object.keys(deWeak).length?`  Zuletzt falsch bei: ${Object.entries(deWeak).map(([k,v])=>k+" ("+v+")").join(", ")}`:"  Keine Schwachstelle auffällig."];
   return L.filter((x,i,a)=>!(x===""&&a[i-1]==="")).join("\n");
 }
+function vSync(){
+  const F=window.FamilieSync,s=F&&F.session(),m=F&&F.member();
+  if(!F)return "";
+  if(!s)return `<section class="panel stack"><h2>Familienspeicher</h2>
+    <p class="small muted">Mit der Anmeldung wird der Lernstand gesichert und ihr seht ihn auch auf euren Handys. Eine Anmeldung gilt für alle Apps.</p>
+    <form id="sb-login" class="stack"><input class="inp" id="sb-mail" type="email" autocomplete="username" placeholder="E-Mail" value="${esc(UI.sbMail||"")}" style="font-size:1rem" required>
+     <input class="inp" id="sb-pw" type="password" autocomplete="current-password" placeholder="Passwort" style="font-size:1rem" required>
+     <button class="btn green" type="submit" ${UI.sbBusy?"disabled":""}>${UI.sbBusy?"Melde an …":"Anmelden"}</button></form>
+    ${UI.sbErr?`<p class="small" style="color:#e85a62">${esc(UI.sbErr)}</p>`:""}</section>`;
+  const tm=SYNC.last?SYNC.last.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}):null;
+  const kids=(UI.sbKids||[]).filter(k=>k.role==="child"&&(!m||k.id!==m.id));
+  return `<section class="panel stack"><h2>Familienspeicher</h2>
+    <p class="small">Angemeldet als <b>${esc(m?m.display_name:s.email)}</b>${m?(m.role==="parent"?" (Elternteil)":""):""}</p>
+    <p class="small muted">${SYNC.err?esc(SYNC.err):SYNC.busy?"Gleiche ab …":tm?"Zuletzt abgeglichen um "+tm+" Uhr.":"Noch nicht abgeglichen."}</p>
+    <div class="row"><button class="btn" data-act="sb-sync">Jetzt abgleichen</button><button class="btn ghost" data-act="sb-out">Abmelden</button></div>
+    ${m&&m.role==="parent"?`<div class="stack"><span class="lbl">Wochenbericht aus dem Familienspeicher</span>
+      ${kids.length?`<div class="row">${kids.map(k=>`<button class="btn ghost" data-act="sb-kid" data-id="${esc(k.id)}">${esc(k.display_name)}</button>`).join("")}</div>`:`<button class="btn ghost" data-act="sb-kids">Kinder laden</button>`}
+      ${UI.sbKidRep?`<textarea class="inp" readonly>${esc(UI.sbKidRep)}</textarea>`:""}</div>`:""}
+   </section>`;
+}
 function vParents(){
   const c=UI.confirm,o=!S.imported&&oldData();
   return `<div class="stack" style="margin-top:20px">
    <h1>Für Eltern</h1>
    <section class="panel stack"><h2>Wochenbericht</h2><textarea class="inp" id="rep" readonly>${esc(report())}</textarea>
     <div class="row"><button class="btn" data-act="share-rep">Teilen</button><button class="btn ghost" data-act="copy-rep">Kopieren</button></div></section>
+   ${vSync()}
    <section class="panel stack"><h2>Schulstoff</h2>
     <div><span class="lbl">Englisch: aktuelle Unit</span><div class="seg">${SCHOOL_UNITS.map(([i,u])=>`<button data-act="enu" data-v="${i}" aria-pressed="${enUnitCur()===i}">${esc(u.replace(/^Orange Line 1 · /,""))}</button>`).join("")}</div><p class="small muted" style="margin-top:4px">Neue Vokabeln kommen aus dieser Unit, dazu ab und zu Tennis-Englisch. Bekannte Wörter werden weiter wiederholt.</p></div>
     <div><span class="lbl">Mathe: aktuelles Kapitel</span><div class="seg">${Object.entries(KAP).map(([k,v])=>`<button data-act="mk" data-v="${k}" aria-pressed="${+S.mk===+k}">${esc(v.short)}</button>`).join("")}</div><p class="small muted" style="margin-top:4px">${esc((KAP[S.mk]||KAP[2]).n)} kommt im Trainingsmatch öfter dran und füllt im Grand-Slam-Match den 5. Satz.</p></div>
@@ -1121,7 +1170,7 @@ function vParents(){
     ${o?`<button class="btn ghost" data-act="import">Lernstand aus der Lern-Oase übernehmen</button>`:""}
     <button class="btn ${c==="wipe"?"danger":"ghost"}" data-act="wipe">${c==="wipe"?"Wirklich alles löschen? Nochmal tippen":"Fortschritt komplett zurücksetzen"}</button>
    </section>
-   <p class="note">Alles bleibt auf diesem Gerät. Neue Vokabeln und Aufgaben kommen per Update dazu, der Fortschritt bleibt dabei erhalten. Die Lern-Oase bleibt unverändert und funktioniert weiter.</p>
+   <p class="note">${SYNC.fs()?"Der Stand liegt auf diesem Gerät und wird mit dem Familienspeicher abgeglichen.":"Ohne Anmeldung bleibt alles auf diesem Gerät."} Neue Vokabeln und Aufgaben kommen per Update dazu, der Fortschritt bleibt dabei erhalten. Die Lern-Oase bleibt unverändert und funktioniert weiter.</p>
   </div>`;
 }
 
@@ -1156,6 +1205,13 @@ document.addEventListener("click",async ev=>{
    case"pitch":S.pitch=+b.dataset.v;save();render();speak("Hello! Let's play tennis!");break;
    case"voice-test":speak("Hello! I'm "+AN()+", the tennis ball. Let's learn English!");break;
    case"save-set":{S.name=$("#s-name").value.trim();S.lobName=$("#s-lob").value.trim()||"Lobbi";S.aceName=$("#s-ace").value.trim()||"Ace";save();toast("Gespeichert!");render();break;}
+   case"sb-sync":SYNC.ready?SYNC.now().then(()=>render()):SYNC.start();render();break;
+   case"sb-out":await FamilieSync.signOut();SYNC.ready=false;SYNC.last=null;SYNC.err=null;UI.sbKids=null;UI.sbKidRep=null;render();toast("Abgemeldet. Der Stand bleibt auf dem Gerät.");break;
+   case"sb-kids":try{UI.sbKids=await FamilieSync.familyMembers();}catch(e){toast("Gerade nicht möglich.");}render();break;
+   case"sb-kid":try{const r=await FamilieSync.pull(APP_ID,b.dataset.id);
+       if(!r){UI.sbKidRep="Noch kein Lernstand im Familienspeicher.";}
+       else{const own=S;S=Object.assign(blank(),r.data);try{UI.sbKidRep=report()+"\n\nStand vom "+new Date(r.updated_at).toLocaleString("de-DE");}finally{S=own;}}
+     }catch(e){UI.sbKidRep="Gerade nicht abrufbar: "+e.message;}render();break;
    case"import":{const o=oldData();if(o){importOld(o);save();UI.view="home";render();toast("Lernstand übernommen!");}break;}
    case"copy-rep":{const ta=$("#rep");try{await navigator.clipboard.writeText(ta.value);toast("Kopiert!");}catch(e){ta.focus();ta.select();toast("Text markiert, jetzt kopieren.");}break;}
    case"share-rep":{const text=report();try{if(navigator.share){await navigator.share({title:"Lern-Match Wochenbericht",text});return;}}catch(e){if(e&&e.name==="AbortError")return;}toast("Teilen geht hier nicht. Nimm „Kopieren“.");break;}
@@ -1170,6 +1226,12 @@ document.addEventListener("submit",ev=>{
   if(ev.target.id==="setup"){S.name=$("#f-name").value.trim();S.lobName=$("#f-lob").value.trim()||"Lobbi";S.aceName=$("#f-ace").value.trim()||"Ace";
     const imp=$("#f-imp");if(imp&&imp.checked)importOld(oldData());else S.imported=true;
     S.setupDone=true;save();render();snd("pop");}
+  if(ev.target.id==="sb-login"){const mail=$("#sb-mail").value,pw=$("#sb-pw").value;UI.sbBusy=true;UI.sbErr=null;UI.sbMail=mail;render();
+    FamilieSync.signIn(mail,pw).then(async m=>{UI.sbBusy=false;
+      if(!m){UI.sbErr="Angemeldet, aber das Konto gehört noch zu keiner Familie.";render();return;}
+      if(m.role==="parent"){try{UI.sbKids=await FamilieSync.familyMembers();}catch(e){}}
+      toast("Hallo "+m.display_name+"!");await SYNC.start();render();
+    }).catch(e=>{UI.sbBusy=false;UI.sbErr=e.message;render();});return;}
   if(ev.target.id==="en-form"){const v=$("#en-in").value;if(!v.trim()){talk("Schreib zuerst ein Wort.");return;}answer(v,null);}
 });
 document.addEventListener("input",ev=>{if(ev.target.id==="en-in")UI.input=ev.target.value;});
@@ -1184,6 +1246,7 @@ document.addEventListener("keydown",ev=>{
   }
 });
 render();
+SYNC.start();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
 try{if("serviceWorker" in navigator&&location.protocol==="https:"&&window.self===window.top&&window.__SW__)navigator.serviceWorker.register("sw.js").catch(()=>{});}catch(e){}
 </script>

@@ -4,4 +4,5 @@ Tägliches Lern-Match mit Mathe, Englisch-Vokabeln und Deutsch-Rechtschreibung f
 
 - Neue Vokabeln, Aufgaben und Tennis-Fragen stehen in `inhalte.js`.
 - Läuft im Browser und lässt sich in Chrome über „App installieren“ auf den Startbildschirm legen.
-- Der Lernstand wird nur auf dem jeweiligen Gerät gespeichert. Beim ersten Start wird der Lernstand aus Fenneks Lern-Oase übernommen, wenn beide unter derselben GitHub-Pages-Adresse laufen.
+- Der Lernstand liegt zuerst auf dem Gerät. Wer sich im Eltern-Tab anmeldet, gleicht ihn mit dem Familienspeicher (Supabase, Frankfurt) ab; der neuere Stand gewinnt. Eltern sehen dort Philips Wochenbericht. Die Anbindung steckt in `familie-sync.js` und wird auch von den anderen Apps genutzt.
+- Ohne Anmeldung bleibt alles nur auf dem Gerät. Beim ersten Start wird der Lernstand aus Fenneks Lern-Oase übernommen, wenn beide unter derselben GitHub-Pages-Adresse laufen.
