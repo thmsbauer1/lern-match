@@ -1,7 +1,7 @@
 /* familie-sync.js – Familienspeicher (Supabase) für alle Apps unter thmsbauer1.github.io
    Ohne Bibliotheken, nur fetch. Offline-fest: Fehler werden geschluckt, Log-Einträge warten in einer Warteschlange.
    Die Anmeldung liegt im gemeinsamen Browserspeicher der Webadresse – einmal anmelden gilt für alle Apps.
-   Diese Datei ist in allen Repos gleich (lern-match, spuernase, testtrainer). Änderungen bitte überall übernehmen.
+   Diese Datei ist in allen Repos gleich (lern-match, spuernase, testtrainer, eltern-cockpit). Änderungen bitte überall übernehmen.
 
    Einbinden in eine App (siehe spuernase):
      FamilieSync.attach({app:"spuernase", get:()=>S, set:d=>{S=d;}, store:()=>localStorage…, render, idle:()=>bool, showChild:(data,info)=>{…}})
@@ -62,6 +62,9 @@
       const q=ls.get(QUEUE)||[];q.push({member_id:m.id,app,kind,value:value||{},occurred_at:new Date().toISOString()});ls.set(QUEUE,q.slice(-500));
       FS.flush();
     },
+    /* Lesender Zugriff auf eine Tabelle (nur angemeldet; die Datenbankregeln entscheiden, was sichtbar ist).
+       Beispiel: FS.rest("/rest/v1/activity_log?select=kind,value&member_id=eq.…") – genutzt vom Eltern-Cockpit. */
+    async rest(path){return req(path);},
     /* Ruft eine Edge Function im Familienspeicher auf (nur angemeldet), z. B. FS.fn("tiebreak-check",{…}). */
     async fn(name,body){return req("/functions/v1/"+encodeURIComponent(name),{method:"POST",body:body||{}});},
     async flush(){

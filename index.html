@@ -774,7 +774,7 @@ const GEN={
     ];
     const x=pickA(T)();return {q:`<p class="q">${esc(x.t)}</p>`,raw:true,a:x.a,unit:x.u,expl:x.ex};}
 };
-function mTask(skill){const g=GEN[skill](lvl(skill));return Object.assign({subj:"m",kind:g.kind||"num",skill},g);}
+function mTask(skill){const L=lvl(skill),g=GEN[skill](L);return Object.assign({subj:"m",kind:g.kind||"num",skill,L},g);}
 const BASIS=["plus","minus","mal","geteilt","begriffe","ueberschlag","luecke","mauer","probe","schriftlich","text"];
 /* Schulbuch-Kapitel (Dreifach Mathe 5). Die Eltern stellen das aktuelle Kapitel ein. */
 const KAP={2:{short:"2 · Plus und Minus",n:"Kapitel 2: Addieren und Subtrahieren",s:["worte","geschickt","klammer","schriftlich","ueberschlag","luecke","text"]},
@@ -791,6 +791,67 @@ function mTasks(n,mode){
   return shuffle(chosen).map(mTask);
 }
 function mUpdate(skill,ok){const s=S.m[skill]||{lvl:1,run:0,ok:0,n:0};s.n++;if(ok){s.ok++;s.run=Math.max(s.run,0)+1;if(s.run>=3&&s.lvl<3){s.lvl++;s.run=0;UI.levelUp=SKILLS[skill];}}else{s.run=Math.min(s.run,0)-1;if(s.run<=-2&&s.lvl>1){s.lvl--;s.run=0;}}S.m[skill]=s;}
+
+/* ---------- Fehler verstehen ----------
+   Erkennt typische Fehlermuster, damit Ace gezielt helfen kann und die Eltern im Cockpit sehen, was schiefging.
+   Jede falsche Antwort wird als Ereignis "fehler" in den Familienspeicher geschrieben. */
+const plainQ=t=>{const h=t.raw?t.q:t.q+" = ?";return String(h).replace(/&nbsp;/g," ").replace(/<[^>]+>/g," ").replace(/[\s   ]+/g," ").trim();};
+function evalLTR(str){const tk=String(str).replace(/[()]/g," ").match(/\d+|[+\-−·:×]/g)||[];let v=+tk[0];for(let i=1;i+1<tk.length;i+=2){const o=tk[i],b=+tk[i+1];v=o==="+"?v+b:o==="·"||o==="×"?v*b:o===":"?v/b:v-b;}return v;}
+const MISTAKE={
+  "genau-statt-gerundet":{kid:"Du hast ganz genau gerechnet. Hier sollst du die Zahlen erst auf Zehner runden – dann wird es leichter!",eltern:"Genau gerechnet statt gerundet"},
+  "nur-eine-gerundet":{kid:"Fast! Du hast nur eine Zahl gerundet. Beide Zahlen auf Zehner runden, dann rechnen.",eltern:"Nur eine Zahl gerundet"},
+  "klammer-uebersehen":{kid:"Du hast einfach von links nach rechts gerechnet. Die Klammer kommt zuerst dran!",eltern:"Klammer übersehen, von links nach rechts gerechnet"},
+  "nur-klammer":{kid:"Die Klammer hast du richtig ausgerechnet! Jetzt geht es noch weiter: Rechne mit diesem Ergebnis den Rest der Aufgabe.",eltern:"Nur die Klammer ausgerechnet und dann aufgehört"},
+  "punkt-vor-strich":{kid:"Achtung: Mal und Geteilt kommen vor Plus und Minus!",eltern:"Punkt vor Strich nicht beachtet"},
+  "uebertrag":{kid:"Eine Stelle ist um 1 daneben. Hast du den Übertrag vergessen? Schreib die kleine 1 auf!",eltern:"Übertrag vergessen (eine Stelle um 1 daneben)"},
+  "entbuendeln":{kid:"Eine Stelle ist um 1 daneben. Beim Minus musst du manchmal entbündeln – die kleine 1 nicht vergessen!",eltern:"Beim Minus Entbündeln vergessen (eine Stelle um 1 daneben)"},
+  "rechenzeichen":{kid:"Schau noch mal auf das Rechenzeichen – das war plus statt minus (oder umgekehrt).",eltern:"Rechenzeichen verwechselt"},
+  "zehner":{kid:"Genau 10 daneben – schau beim Zehnerübergang genau hin.",eltern:"Um 10 daneben (Zehnerübergang)"},
+  "knapp":{kid:"Nur 1 daneben – fast!",eltern:"Um 1 verrechnet"},
+  "reihe":{kid:"Du warst in der Einmaleins-Reihe einen Schritt daneben.",eltern:"Einmaleins-Reihe um einen Schritt verrutscht"},
+  "verdoppelt":{kid:"Hier ist der Selbstlaut davor lang – dann nur ein Mitlaut.",eltern:"Verdoppelt, obwohl der Selbstlaut lang ist"},
+  "nicht-verdoppelt":{kid:"Hier ist der Selbstlaut davor kurz – dann wird der Mitlaut verdoppelt.",eltern:"Verdopplung vergessen nach kurzem Selbstlaut"},
+  "schreibweise":{kid:"",eltern:"Wort gewusst, ein Buchstabe falsch"},
+  "fast":{kid:"",eltern:"Ähnlich, aber mehrere Buchstaben falsch"},
+  "verwechselt":{kid:"",eltern:"Mit einem anderen Wort verwechselt"},
+  "leer":{kid:"",eltern:"Keine Antwort"}
+};
+function mistake(t,val){
+  try{
+    if(t.subj==="m"&&t.kind!=="mc"){
+      const v=Number(val),a=t.a,d=v-a,q=plainQ(t),nums=(q.match(/\d+/g)||[]).map(Number),op=(q.match(/[+−-]/)||[])[0];
+      if(val===""||val==null)return "leer";
+      if(t.skill==="ueberschlag"&&nums.length>=2){const [x,y]=nums.slice(-2),f=(p,r)=>op==="+"?p+r:p-r;
+        if(v===f(x,y))return "genau-statt-gerundet";if(v===f(r10(x),y)||v===f(x,r10(y)))return "nur-eine-gerundet";}
+      if(t.skill==="klammer"){const ltr=evalLTR(q.replace("= ?","")),inner=(q.match(/\(([^)]*)\)/)||[])[1];
+        if(v===ltr&&ltr!==a)return /\(/.test(q)?"klammer-uebersehen":"punkt-vor-strich";
+        if(inner&&v===evalLTR(inner))return "nur-klammer";}
+      if((t.skill==="schriftlich"||t.skill==="schriftmal")&&nums.length>=2){const [x,y]=nums.slice(-2);
+        if(op&&op!=="+"&&v===x+y||op==="+"&&v===x-y)return "rechenzeichen";
+        if([10,100,1000,10000].includes(Math.abs(d)))return op==="+"||t.skill==="schriftmal"?"uebertrag":"entbuendeln";}
+      if(t.skill==="mal"&&nums.length>=2){const [x,y]=nums.slice(-2);if([ (x+1)*y,(x-1)*y,x*(y+1),x*(y-1)].includes(v))return "reihe";}
+      if(Math.abs(d)===10)return "zehner";
+      if(Math.abs(d)===1)return "knapp";
+      return null;}
+    if(t.subj==="d"&&t.item.kind==="gap"&&t.item.cat==="doppel"){const pick=t.item.o[val]||"";return pick.length>t.item.o[t.item.a].length?"verdoppelt":"nicht-verdoppelt";}
+    if(t.subj==="e"&&t.kind!=="mc"){const c=core(val||"");if(!c)return "leer";
+      if(WORDS.some(w=>w.id!==t.w.id&&w.en.some(e=>core(e)===c)))return "verwechselt";
+      const best=Math.min(...t.w.en.map(e=>lev(core(e),c)));return best===1?"schreibweise":best<=3?"fast":null;}
+  }catch(e){}
+  return null;
+}
+function logMistake(t,val,res){
+  if(!window.FamilieSync)return;
+  try{
+    const typ=mistake(t,val);let v;
+    if(t.subj==="m")v={f:"m",b:t.skill,st:t.L,aufgabe:plainQ(t),eingabe:t.kind==="mc"?t.o[val]:String(val),richtig:t.kind==="mc"?t.o[t.a]:t.a};
+    else if(t.subj==="e")v={f:"e",b:"vokabel",id:t.w.id,aufgabe:t.w.de,eingabe:t.kind==="mc"?t.o[val]:String(val),richtig:t.w.en[0],fast:res==="near"};
+    else if(t.subj==="g")v={f:"g",b:"grammatik",id:t.item.id,aufgabe:t.item.s,eingabe:t.item.o[val],richtig:t.item.o[t.item.a]};
+    else{const d=t.item;v={f:"d",b:d.cat,id:d.id,aufgabe:d.w||d.s||d.q||(d.o||[]).join(" · "),eingabe:d.kind==="gap"?d.pre+(d.o[val]||"")+d.post:d.o[val],richtig:d.kind==="gap"?d.w:d.kind==="fehler"?d.c:d.o[d.a]};}
+    if(typ)v.typ=typ;
+    FamilieSync.log(APP_ID,"fehler",v);
+  }catch(e){}
+}
 
 /* ---------- Ablauf ---------- */
 const UI={view:"home",lastKey:"",run:null,sceneView:null};
@@ -845,6 +906,7 @@ function answer(val,ev){
   const r=UI.run,sc=r.score[t.set];sc.n++;UI.gameWon=false;UI.rallyBonus=0;
   /* Tennis-Zählweise: richtige Antwort = Punkt, vier Punkte = Spiel. Ein Fehler kostet nichts. */
   if(res!=="no"){sc.ok++;sc.p++;if(sc.p>=4){sc.p=0;sc.g++;UI.gameWon=true;}r.rally++;if(r.rally%5===0)UI.rallyBonus=5;}else r.rally=0;
+  if(res!=="ok")logMistake(t,val,res);
   UI.answered={res,val};r.res[r.i]=res;hist(t.subj==="g"?"e":t.subj,res!=="no");
   const pts=(res==="ok"?3:res==="near"?2:1)+UI.rallyBonus;r.earned+=pts;S.balls+=pts;save();
   snd(res==="no"?"wrong":"right");
@@ -1214,7 +1276,9 @@ function taskBody(t,A){
 /* Ace erklärt */
 function feedback(t,A){
   const ok=A.res==="ok";let head="",body="";
-  if(t.subj==="m"){head=ok?"Richtig!":`Richtig ist: ${t.kind==="mc"?esc(t.o[t.a]):fmt(t.a)+(t.unit?" "+esc(t.unit):"")}`;body=t.explRaw?t.expl:esc(t.expl||"");}
+  if(t.subj==="m"){head=ok?"Richtig!":`Richtig ist: ${t.kind==="mc"?esc(t.o[t.a]):fmt(t.a)+(t.unit?" "+esc(t.unit):"")}`;body=t.explRaw?t.expl:esc(t.expl||"");
+    if(!ok){const k=mistake(t,A.val),hint=k&&MISTAKE[k]&&MISTAKE[k].kid;if(hint)body=`<b>${esc(hint)}</b><br>`+body;
+      const s=S.m[t.skill];if(s&&s.ok===0&&s.n>=3)body+=`<br><b>Das ist knifflig! Frag doch Mama oder Papa, wie das geht – die zeigen es dir.</b>`;}}
   else if(t.subj==="e"){const main=t.w.en[0];head=ok?`Richtig: ${esc(main)}`:A.res==="near"?`Fast! Richtig geschrieben: ${esc(main)}`:`Richtig ist: ${esc(main)}`;body=(t.w.en.length>1?`Auch richtig: ${esc(t.w.en.slice(1).join(", "))}. `:"")+esc(t.w.note||"");body+=`<br><button class="speak" data-act="speak" data-t="${esc(main)}">🔊 Anhören</button>`;}
   else if(t.subj==="g"){const g=t.item,full=egSentence(g);head=ok?"Richtig!":`Richtig ist: ${esc(g.o[g.a])}`;body=`<span lang="en">${esc(full)}</span><br>${esc(g.tip)}<br><button class="speak" data-act="speak" data-t="${esc(full)}">🔊 Anhören</button>`;}
   else{const d=t.item;head=ok?"Richtig!":(d.kind==="gap"?`Richtig: ${esc(d.w)}`:d.kind==="fehler"?`Richtig wäre: ${esc(d.c)}`:`Richtig: ${esc(d.o[d.a])}`);body=esc(d.tip||"");}
