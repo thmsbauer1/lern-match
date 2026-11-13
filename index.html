@@ -363,8 +363,18 @@ const KEY="lern-match-v1",OLD_KEY="fennek-lernoase-v1";let memStore=null,storeOk
 function load(){try{const t=localStorage.getItem(KEY);return t?JSON.parse(t):null;}catch(e){storeOk=false;return memStore;}}
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){storeOk=false;memStore=JSON.parse(JSON.stringify(S));}}
 function save(){S.savedAt=Date.now();saveLocal();SYNC.later();}
-function blank(){return {v:1,name:"",aceName:"Ace",lobName:"Lobbi",sound:true,pitch:1.6,voice:"",newPerDay:5,len:"normal",balls:0,missions:{},days:{},m:{},en:{},de:{},hist:{},quiz:{},qn:0,eg:{},titles:{},slams:{},gsN:0,gsTotal:0,mk:2,enUnit:null,paused:null,tb:{},tbRun:null,tbDraft:null,setupDone:false,imported:false};}
-let S=Object.assign(blank(),load()||{});
+function blank(){return {v:1,name:"",aceName:"Ace",lobName:"Lobbi",sound:true,pitch:1.6,voice:"",newPerDay:5,len:"normal",balls:0,missions:{},days:{},m:{},en:{},de:{},hist:{},quiz:{},qn:0,eg:{},titles:{},slams:{},gsN:0,gsTotal:0,mk:2,enUnit:null,paused:null,tb:{},tbRun:null,tbDraft:null,setupDone:false,imported:false,enMig:1};}
+/* Einmalige Umstellung (Nov. 2026): Unit 2 war vorher nur geschätzt, jetzt steht die echte Wortliste aus dem Buch drin.
+   Der Lernstand der alten Unit-2-Wörter wird auf dieselben Wörter in der neuen Liste übertragen (alte Nummer -> neue ID),
+   Wörter, die nicht im Buch stehen, fallen weg. Läuft für jeden Stand genau einmal (Merker enMig). */
+const EN_MIG1={0:"u2-0",1:"u2-29",2:"u2-28",3:"u2-37",4:"u2-6",5:"u2-5",6:"u2-24",7:"u2-14",8:"u2-40",9:"u2-38",10:"u2-39",11:"u2-34",12:"u2-50",15:"u2-25",16:"u0-110",20:"u0-135",23:"u2-7",25:"u2-3",26:"u2-12",27:"u2-10",28:"u2-8",48:"u0-111",52:"u2-16"};
+function migrate(o){
+  if(!o||typeof o!=="object"||o.enMig>=1)return o;
+  const en={},src=o.en||{};
+  Object.keys(src).forEach(id=>{const m=/^u2-(\d+)$/.exec(id);if(!m){en[id]=src[id];return;}const to=EN_MIG1[+m[1]];if(to&&!en[to])en[to]=src[id];});
+  o.en=en;o.enMig=1;return o;
+}
+let S=Object.assign(blank(),migrate(load())||{});
 /* Lernstand aus Fenneks Lern-Oase: liegt auf derselben Webadresse, daher hier lesbar */
 function oldData(){try{const t=localStorage.getItem(OLD_KEY);if(!t)return null;const o=JSON.parse(t);return o&&typeof o==="object"?o:null;}catch(e){return null;}}
 function importOld(o){
@@ -386,7 +396,7 @@ const SYNC={ready:false,busy:false,t:null,last:null,err:null,
   async start(){const F=this.fs();if(!F||this.busy)return;this.busy=true;
     try{let m=F.member()||await F.loadMember();if(!m){this.err="Dieses Konto ist noch keiner Familie zugeordnet.";return;}
       const r=await F.pull(APP_ID);
-      if(r&&r.data&&(r.data.savedAt||0)>(S.savedAt||0)){S=Object.assign(blank(),r.data);saveLocal();if(UI.view!=="task")render();}
+      if(r&&r.data&&(r.data.savedAt||0)>(S.savedAt||0)){S=Object.assign(blank(),migrate(r.data));saveLocal();if(UI.view!=="task")render();}
       else if(S.setupDone)await F.push(APP_ID,S);
       this.ready=true;this.err=null;this.last=new Date();F.flush();
     }catch(e){this.err=netErr(e);}
@@ -589,27 +599,34 @@ function wordsDue(){const t=today();return WORDS.filter(w=>{const s=enState(w.id
 const SCHOOL_UNITS=((window.INHALTE&&INHALTE.englisch)||[]).map((u,i)=>[i,u.unit]).filter(([i,u])=>!/Tennis/.test(u));
 const TENNIS_U=((window.INHALTE&&INHALTE.englisch)||[]).findIndex(u=>/Tennis/.test(u.unit));
 function enUnitCur(){return S.enUnit!=null?S.enUnit:(SCHOOL_UNITS.length?SCHOOL_UNITS[SCHOOL_UNITS.length-1][0]:0);}
-/* Neue Wörter: zwei aus der aktuellen Unit, eins aus Tennis-Englisch, danach der Rest */
-function wordsNew(){const fresh=WORDS.filter(w=>!enState(w.id)),cu=enUnitCur();const a=fresh.filter(w=>w.u===cu),t=fresh.filter(w=>w.u===TENNIS_U&&w.u!==cu),rest=fresh.filter(w=>w.u!==cu&&w.u!==TENNIS_U);const out=[];while(a.length||t.length){if(a.length)out.push(a.shift());if(a.length)out.push(a.shift());if(t.length)out.push(t.shift());}return out.concat(rest);}
+/* Neue Wörter: zwei aus der aktuellen Unit, dann eins aus einer früheren Unit oder Tennis-Englisch (abwechselnd) */
+function wordsNew(){const fresh=WORDS.filter(w=>!enState(w.id)),cu=enUnitCur();const a=fresh.filter(w=>w.u===cu),t=fresh.filter(w=>w.u===TENNIS_U&&w.u!==cu),o=fresh.filter(w=>w.u!==cu&&w.u!==TENNIS_U);const out=[];let k=0;
+  while(a.length||t.length||o.length){if(a.length)out.push(a.shift());if(a.length)out.push(a.shift());const b=o.length&&(k++%2===0||!t.length)?o:t;if(b.length)out.push(b.shift());}return out;}
+/* Auffrischen: Sichere Wörter (Stufe 5) kommen nach 2 Wochen, dann nach 1 und 2 Monaten wieder dran.
+   Pro Match höchstens 1–2 davon, die am längsten nicht geübten zuerst, damit neue Wörter nicht zu kurz kommen. */
+function wordsRefresh(k){const t=today();return WORDS.filter(w=>{const s=enState(w.id);return s&&s.box>=5&&s.due<=t;}).sort((a,b)=>enState(a.id).due<enState(b.id).due?-1:1).slice(0,k);}
 function newToday(){const t=today();return WORDS.filter(w=>{const s=enState(w.id);return s&&s.first===t;}).length;}
 function enTasks(n){
-  let list=wordsDue().slice(0,n);
-  const room=Math.max(0,Math.min(n-list.length,(S.newPerDay||5)-newToday()));
-  list=list.concat(wordsNew().slice(0,room));
+  const old=wordsRefresh(n>=8?2:1);
+  let list=wordsDue().slice(0,n-old.length);
+  const room=Math.max(0,Math.min(n-old.length-list.length,(S.newPerDay||5)-newToday()));
+  list=list.concat(wordsNew().slice(0,room),old);
   if(list.length<n){const rest=shuffle(WORDS.filter(w=>enState(w.id)&&!list.includes(w)));list=list.concat(rest.slice(0,n-list.length));}
   if(list.length<n)list=list.concat(wordsNew().filter(w=>!list.includes(w)).slice(0,n-list.length));
   return shuffle(list).map(enTask);
 }
 function enTask(w){
   const st=enState(w.id),box=st?st.box:0;
-  if(box<2){const others=shuffle(WORDS.filter(x=>x!==w&&core(x.en[0])!==core(w.en[0]))).slice(0,3).map(x=>x.en[0]);
+  if(box<2){const others=shuffle(WORDS.filter(x=>x!==w&&!clash(x,w))).slice(0,3).map(x=>x.en[0]);
     const o=shuffle([w.en[0]].concat(others));return {subj:"e",kind:"mc",w,o,a:o.indexOf(w.en[0])};}
   return {subj:"e",kind:"type",w};
 }
+/* Zwei Wörter „beißen“ sich als Auswahl, wenn eine Antwort gleich ist oder ganz in der anderen steckt (Sorry / I'm sorry) */
+function clash(a,b){const tk=s=>core(s).split(" ");return a.en.some(e=>b.en.some(f=>{const x=tk(e),y=tk(f);return x.every(q=>y.includes(q))||y.every(q=>x.includes(q));}));}
 function enUpdate(w,res){
-  const t=today();const st=S.en[w.id]||{box:0,ok:0,n:0,first:t};st.n++;
+  const t=today();const st=S.en[w.id]||{box:0,ok:0,n:0,first:t};const was=st.box;st.n++;
   if(res==="ok"){st.ok++;st.box=Math.min(5,st.box+1);}else if(res==="no"){st.box=Math.max(0,Math.min(st.box,1)-1);st.miss=(st.miss||0)+1;}
-  st.due=addDays(t,BOX_DAYS[st.box]);S.en[w.id]=st;
+  if(was>=5&&res==="ok"){st.rf=(st.rf||0)+1;st.due=addDays(t,st.rf>1?60:30);}else st.due=addDays(t,BOX_DAYS[st.box]);S.en[w.id]=st;
 }
 /* Englisch-Grammatik: Lückensätze */
 const EG=((window.INHALTE&&INHALTE.englischGrammatik)||[]).map(x=>({id:"g-"+x[0],s:x[0],o:x[1],a:x[2],tip:x[3]||""}));
@@ -1311,7 +1328,7 @@ function vWords(){
   return `<div class="stack" style="margin-top:20px">
    <div class="duo">${lineHTML("ace","Tipp auf den Lautsprecher, dann hörst du das Wort auf Englisch.")}</div>
    <h1>Meine Vokabeln</h1>
-   <p class="small muted">Die grünen Balken zeigen, wie sicher du ein Wort schon kannst. Bei fünf ist es im Langzeitgedächtnis.</p>
+   <p class="small muted">Die grünen Balken zeigen, wie sicher du ein Wort schon kannst. Bei fünf ist es im Langzeitgedächtnis – ab und zu kommt es trotzdem zum Auffrischen wieder.</p>
    ${order.map(([u,ws])=>`<h2>${esc(u)}</h2><div class="wlist">${ws.map(w=>{const b=(enState(w.id)||{}).box||0;return `<div class="w"><div style="min-width:0"><div class="en">${esc(w.en[0])}</div><div class="de">${esc(w.de)}</div></div><div class="pips" aria-label="Stufe ${b} von 5">${[1,2,3,4,5].map(i=>`<i class="${b>=i?"on":""}"></i>`).join("")}</div><button class="say" data-act="speak" data-t="${esc(w.en[0])}" aria-label="${esc(w.en[0])} anhören">🔊</button></div>`;}).join("")}</div>`).join("")}
   </div>`;
 }
@@ -1372,7 +1389,7 @@ function vParents(){
     <div class="row"><button class="btn" data-act="share-rep">Teilen</button><button class="btn ghost" data-act="copy-rep">Kopieren</button></div></section>
    ${vSync()}
    <section class="panel stack"><h2>Schulstoff</h2>
-    <div><span class="lbl">Englisch: aktuelle Unit</span><div class="seg">${SCHOOL_UNITS.map(([i,u])=>`<button data-act="enu" data-v="${i}" aria-pressed="${enUnitCur()===i}">${esc(u.replace(/^Orange Line 1 · /,""))}</button>`).join("")}</div><p class="small muted" style="margin-top:4px">Neue Vokabeln kommen aus dieser Unit, dazu ab und zu Tennis-Englisch. Bekannte Wörter werden weiter wiederholt.</p></div>
+    <div><span class="lbl">Englisch: aktuelle Unit</span><div class="seg">${SCHOOL_UNITS.map(([i,u])=>`<button data-act="enu" data-v="${i}" aria-pressed="${enUnitCur()===i}">${esc(u.replace(/^Orange Line 1 · /,""))}</button>`).join("")}</div><p class="small muted" style="margin-top:4px">Neue Vokabeln kommen aus dieser Unit, dazu abwechselnd Wörter aus früheren Units und Tennis-Englisch. Sichere Wörter kommen nach einigen Wochen zum Auffrischen wieder.</p></div>
     <div><span class="lbl">Mathe: aktuelles Kapitel</span><div class="seg">${Object.entries(KAP).map(([k,v])=>`<button data-act="mk" data-v="${k}" aria-pressed="${+S.mk===+k}">${esc(v.short)}</button>`).join("")}</div><p class="small muted" style="margin-top:4px">${esc((KAP[S.mk]||KAP[2]).n)} kommt im Trainingsmatch öfter dran und füllt im Grand-Slam-Match den 5. Satz.</p></div>
    </section>
    <section class="panel stack"><h2>Einstellungen</h2>
@@ -1436,7 +1453,7 @@ document.addEventListener("click",async ev=>{
    case"sb-kids":try{UI.sbKids=await FamilieSync.familyMembers();}catch(e){toast("Gerade nicht möglich.");}render();break;
    case"sb-kid":try{const r=await FamilieSync.pull(APP_ID,b.dataset.id);
        if(!r){UI.sbKidRep="Noch kein Lernstand im Familienspeicher.";}
-       else{const own=S;S=Object.assign(blank(),r.data);try{UI.sbKidRep=report()+"\n\nStand vom "+new Date(r.updated_at).toLocaleString("de-DE");}finally{S=own;}}
+       else{const own=S;S=Object.assign(blank(),migrate(r.data));try{UI.sbKidRep=report()+"\n\nStand vom "+new Date(r.updated_at).toLocaleString("de-DE");}finally{S=own;}}
      }catch(e){UI.sbKidRep="Gerade nicht abrufbar: "+e.message;}render();break;
    case"import":{const o=oldData();if(o){importOld(o);save();UI.view="home";render();toast("Lernstand übernommen!");}break;}
    case"copy-rep":{const ta=$("#rep");try{await navigator.clipboard.writeText(ta.value);toast("Kopiert!");}catch(e){ta.focus();ta.select();toast("Text markiert, jetzt kopieren.");}break;}
