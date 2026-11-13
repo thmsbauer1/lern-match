@@ -209,7 +209,7 @@ window.INHALTE = {
         // Station 1, Seite 36
         ["der Opa", ["grandpa", "grandfather", "granddad"], "Das d spricht man nicht."],
         ["der Geburtstag", ["birthday"]],
-        ["lustig; witzig; komisch; seltsam", ["funny"]],
+        ["lustig; witzig; komisch; merkwürdig; seltsam", ["funny"], "Kommt von fun (Spaß)."],
         ["der Hut", ["hat"]],
         ["frech", ["cheeky"]],
         ["sehr (My new school is ___ nice.)", ["very"]],
