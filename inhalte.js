@@ -247,12 +247,70 @@ window.INHALTE = {
         ["der Sohn", ["son"]],
         ["das Einzelkind", ["only child"]],
         // Seite 39
-        ["sind nicht (Kurzform: We ___ brothers.)", ["aren't", "are not"]]
+        ["sind nicht (Kurzform: We ___ brothers.)", ["aren't", "are not"]],
+        /* S. 41 Viewing */
+        ["klein", ["small", "little"]],
+        ["die Küche", ["kitchen"]],
+        ["der Garten", ["garden"]],
+        ["das Wohnzimmer", ["living room"]],
+        ["der Dachboden", ["attic"]],
+        ["das Badezimmer; das Bad", ["bathroom"]],
+        ["das Esszimmer", ["dining room"]],
+        ["der Flur; der Korridor; die Diele", ["hall"]],
+        ["die Leute; die Menschen", ["people"]],
+        ["der Tisch", ["table"]],
+        ["das Tier", ["animal"]],
+        ["der Ort; der Platz; die Stelle (What is your favourite ___?)", ["place"]],
+        /* S. 42–44 Station 2 */
+        ["der Nachmittag", ["afternoon"]],
+        ["zu Hause (Sorry, my book is ___.)", ["at home"]],
+        ["nicht können (Sorry, I ___ spell that.)", ["can't", "cannot"], "Langform: cannot."],
+        ["müssen", ["must"]],
+        ["unter", ["under"]],
+        ["das Sofa", ["sofa"]],
+        ["der Schrank", ["cupboard"], "Das p spricht man nicht: KAB-ed."],
+        ["bleiben; übernachten", ["to stay"]],
+        ["die Tür", ["door"]],
+        ["das Regal; das Regalbrett", ["shelf"], "Mehrzahl: shelves."],
+        ["das Bett", ["bed"]],
+        ["die Box; die Kiste; die Schachtel", ["box"]],
+        ["der Snack; der Imbiss", ["snack"]],
+        ["es gibt; da ist; dort ist (___ one book on the table.)", ["there's", "there is"], "there's = there is"],
+        ["die Packung; das Päckchen", ["packet"]],
+        ["die Sache; das Ding", ["thing"]],
+        ["der Trick; das Kunststück; der Streich", ["trick"]],
+        ["das Bild", ["picture"]],
+        ["ihr / ihre; sie (I can see Katie and ___ mum.)", ["her"]],
+        ["vor; davor (Ort: ___ the house)", ["in front of"], "Gegenteil: behind."],
+        ["neben", ["next to"]],
+        ["hinter", ["behind"]],
+        ["die Lampe", ["lamp"]],
+        ["der Mülleimer", ["bin"]],
+        ["der Stuhl", ["chair"]],
+        ["das Fenster", ["window"]],
+        ["das Kopfkissen", ["pillow"]],
+        ["der Spiegel", ["mirror"]],
+        ["der Vorhang", ["curtain"]],
+        ["der Teppich", ["carpet"]],
+        ["die Schublade", ["drawer"]]
       ]
     }
   ],
 
   /* Englisch-Grammatik (Satz 4 im Grand-Slam-Match): [Satz mit ___, [Antworten], richtige Antwort, Tipp] */
+  /* Vokabeltest: Diese Wörter kommen bis zum Testtag bevorzugt dran (neue zuerst, unsichere in jedem Match).
+     Angegeben wird jeweils die erste englische Antwort des Worts. Nach dem Testtag läuft alles normal weiter. */
+  vokabeltest: {
+    datum: "2026-11-26",
+    titel: "Unit 2, Buchseiten 238 und 239",
+    woerter: ["cousin", "or", "their", "parents", "aunt", "uncle", "grandparents", "step-", "great-", "stepmum", "stepdad",
+      "stepsister", "stepbrother", "stepmother", "great-grandparents", "partner", "son", "only child", "aren't",
+      "small", "kitchen", "garden", "living room", "attic", "bathroom", "dining room", "hall", "number", "people", "table",
+      "animal", "place", "afternoon", "at home", "can't", "must", "under", "sofa", "cupboard", "to stay", "door", "shelf",
+      "bed", "box", "snack", "there's", "packet", "thing", "trick", "picture", "her", "in front of", "next to", "behind",
+      "lamp", "bin", "chair", "window", "pillow", "mirror", "curtain", "carpet", "drawer"]
+  },
+
   englischGrammatik: [
     ["I ___ Philip.", ["am", "is", "are"], 0, "Bei I steht immer am: I am = I'm."],
     ["My sister ___ eight.", ["am", "is", "are"], 1, "Bei he, she, it steht is. My sister ist eine she."],
