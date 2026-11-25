@@ -9,6 +9,7 @@ Tägliches Lern-Match mit Mathe, Englisch-Vokabeln und Deutsch-Rechtschreibung f
 - Ohne Anmeldung bleibt alles nur auf dem Gerät. Beim ersten Start wird der Lernstand aus Fenneks Lern-Oase übernommen, wenn beide unter derselben GitHub-Pages-Adresse laufen.
 
 - Beispielsätze und Merkhilfen: In `inhalte.js` unter `vokabelSaetze` (Schlüssel = erste englische Antwort). Der deutsche Satz steht bei der Frage, englischer Satz und Merkhilfe kommen nach dem Antworten, Wort und Satz werden vorgelesen.
+- „Wo ist Lobbi?“ (Freies Training und Vokabeltest-Karte): Bild eines Zimmers, Philip schreibt auf Englisch, wo Lobbi ist („under the bed“). Präposition und Gegenstand werden getrennt geprüft und zählen im Karteikasten mit. Szenen stehen in `index.html` unter `SCENES`, Gegenstände unter `SC_OBJ`.
 
 ## Tie-Break (Rechtschreibung im freien Schreiben)
 
