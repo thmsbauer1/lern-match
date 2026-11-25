@@ -308,6 +308,10 @@ window.INHALTE = {
       "small", "kitchen", "garden", "living room", "attic", "bathroom", "dining room", "hall", "number", "people", "table",
       "animal", "place", "afternoon", "at home", "can't", "must", "under", "sofa", "cupboard", "to stay", "door", "shelf",
       "bed", "box", "snack", "there's", "packet", "thing", "trick", "picture", "her", "in front of", "next to", "behind",
+      "lamp", "bin", "chair", "window", "pillow", "mirror", "curtain", "carpet", "drawer"],
+    /* Vorrang (Thomas, 25.11.): Die Wörter von Buchseite 239 (Station 2, S. 42–43) kommen innerhalb der Testwörter zuerst. */
+    vorrang: ["afternoon", "at home", "can't", "must", "under", "sofa", "cupboard", "to stay", "door", "shelf", "bed", "box",
+      "snack", "there's", "packet", "thing", "trick", "picture", "her", "in front of", "next to", "behind",
       "lamp", "bin", "chair", "window", "pillow", "mirror", "curtain", "carpet", "drawer"]
   },
 
