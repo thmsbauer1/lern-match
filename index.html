@@ -268,6 +268,10 @@ select.inp{min-height:48px}
 .tab[aria-current="page"]{color:var(--ink);background:var(--chip);box-shadow:inset 0 4px 0 var(--accent)}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-family:var(--f-display);padding:10px 16px;border:3px solid var(--line);z-index:40;max-width:calc(100% - 32px);text-align:center}
 .note{font-size:.85rem;color:var(--muted);border-left:4px solid var(--gold);padding-left:10px}
+.satz{font-size:1.05rem;font-style:italic;color:var(--muted);margin-top:-6px}
+.satz b{color:var(--ink);font-style:normal}
+.satz-en{font-size:1.1rem;font-weight:800}
+.tipp{font-weight:600}
 .flyer{position:fixed;z-index:45;pointer-events:none;display:flex;align-items:center;gap:4px;font-weight:800;font-size:1.3rem;color:var(--green);text-shadow:2px 2px 0 var(--panel);animation:fly .9s ease-out forwards}
 @keyframes fly{to{transform:translateY(-70px);opacity:0}}
 .banner{position:fixed;left:50%;top:38%;z-index:46;pointer-events:none;transform:translate(-50%,-50%);font-family:var(--f-display);font-weight:700;font-size:2rem;color:#1d2a17;background:#e4f24a;border:3px solid #1d2a17;box-shadow:4px 4px 0 #1d2a17;padding:8px 18px;animation:banner 1.3s ease-out forwards;white-space:nowrap}
@@ -584,10 +588,15 @@ const SOFT=/female|frau|woman|girl|samantha|serena|kate|libby|sonia|hazel|susan|
 function enVoices(){try{return speechSynthesis.getVoices().filter(x=>/^en/i.test(x.lang));}catch(e){return [];}}
 function pickVoice(){const v=enVoices();VOICE=(S.voice&&v.find(x=>x.voiceURI===S.voice))||v.find(x=>/en[-_]GB/i.test(x.lang)&&SOFT.test(x.name))||v.find(x=>SOFT.test(x.name))||v.find(x=>/en[-_]GB/i.test(x.lang))||v[0]||null;}
 try{speechSynthesis.onvoiceschanged=()=>{pickVoice();if(UI.view==="eltern")render();};pickVoice();}catch(e){}
-function speak(text,pitch){try{if(!("speechSynthesis" in window))return;speechSynthesis.cancel();if(!VOICE)pickVoice();const u=new SpeechSynthesisUtterance(text.replace(/^to /,""));u.lang=VOICE?VOICE.lang:"en-GB";if(VOICE)u.voice=VOICE;u.pitch=pitch||S.pitch||1.6;u.rate=.9;speechSynthesis.speak(u);}catch(e){}}
+function speak(text,pitch){speakSeq([text],pitch);}
+function speakSeq(list,pitch){try{if(!("speechSynthesis" in window))return;speechSynthesis.cancel();if(!VOICE)pickVoice();
+  list.forEach(text=>{const u=new SpeechSynthesisUtterance(String(text).replace(/\*/g,"").replace(/^to /,""));u.lang=VOICE?VOICE.lang:"en-GB";if(VOICE)u.voice=VOICE;u.pitch=pitch||S.pitch||1.6;u.rate=.9;speechSynthesis.speak(u);});}catch(e){}}
 
 /* ---------- Englisch: Karteikasten ---------- */
-const WORDS=[];(window.INHALTE&&INHALTE.englisch||[]).forEach((u,ui)=>u.woerter.forEach((w,wi)=>WORDS.push({id:"u"+ui+"-"+wi,u:ui,unit:u.unit,de:w[0],en:w[1],note:w[2]||""})));
+/* Beispielsätze und Merkhilfen (INHALTE.vokabelSaetze): [deutscher Satz, englischer Satz, Merkhilfe], *Wort* wird fett */
+const VSATZ=(window.INHALTE&&INHALTE.vokabelSaetze)||{};
+const satzHTML=s=>esc(s).replace(/\*(.+?)\*/g,"<b>$1</b>");
+const WORDS=[];(window.INHALTE&&INHALTE.englisch||[]).forEach((u,ui)=>u.woerter.forEach((w,wi)=>WORDS.push({id:"u"+ui+"-"+wi,u:ui,unit:u.unit,de:w[0],en:w[1],note:w[2]||"",ex:VSATZ[w[1][0]]||null})));
 const BOX_DAYS=[0,1,2,4,7,14];
 function norm(s){return String(s).toLowerCase().replace(/[’‘`´]/g,"'").replace(/[.,!?;:"]/g,"").replace(/\s+/g," ").trim();}
 function core(s){s=norm(s);if(s.split(" ").length>1)s=s.replace(/^(to|the|a|an) /,"");return s;}
@@ -972,7 +981,7 @@ function answer(val,ev){
   if(UI.gameWon){setTimeout(()=>{snd("spiel");banner("Spiel!");fx($("#games"),"pop");},350);}
   else if(UI.rallyBonus){const txt="Ballwechsel × "+r.rally;setTimeout(()=>banner(txt),350);}
   fx($(".line .av.lobbi"),res==="no"?"shake":"hop");
-  if(t.subj==="e")setTimeout(()=>speak(t.w.en[0]),UI.gameWon?1100:350);
+  if(t.subj==="e")setTimeout(()=>speakSeq(t.w.ex?[t.w.en[0],t.w.ex[1]]:[t.w.en[0]]),UI.gameWon?1100:350);
   if(t.subj==="g")setTimeout(()=>speak(egSentence(t.item)),UI.gameWon?1100:350);
 }
 function next(){
@@ -1322,7 +1331,7 @@ function taskBody(t,A){
     return qh+`<div class="answer" aria-live="polite"><span>${esc(shown||"")}</span>${A?"":'<span class="cursor"></span>'}${t.unit?`<span class="unit">${esc(t.unit)}</span>`:""}</div>`+(A?"":`<div class="pad">${[7,8,9,4,5,6,1,2,3].map(k=>`<button class="key" data-act="key" data-k="${k}">${k}</button>`).join("")}<button class="key" data-act="key" data-k="back" aria-label="Löschen">⌫</button><button class="key" data-act="key" data-k="0">0</button><button class="key ok" data-act="key" data-k="ok" aria-label="Prüfen">✓</button></div>`);
   }
   if(t.subj==="e"){
-    const q=`<p class="small muted">Auf Deutsch:</p><p class="q" style="font-size:1.5rem">${esc(t.w.de)}</p>`;
+    const q=`<p class="small muted">Auf Deutsch:</p><p class="q" style="font-size:1.5rem">${esc(t.w.de)}</p>`+(t.w.ex?`<p class="satz">„${satzHTML(t.w.ex[0])}“</p>`:"");
     if(t.kind==="mc")return q+optsHTML(t.o,t.a,A);
     if(A)return q+`<div class="answer" style="justify-content:flex-start;padding:0 12px;font-size:1.4rem">${esc(A.val)||"—"}</div>`;
     return q+`<form id="en-form" class="stack"><input class="inp" id="en-in" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="auf Englisch …" value="${esc(UI.input)}"><button class="btn big" type="submit">Prüfen</button></form>`;
@@ -1344,7 +1353,8 @@ function feedback(t,A){
   if(t.subj==="m"){head=ok?"Richtig!":`Richtig ist: ${t.kind==="mc"?esc(t.o[t.a]):fmt(t.a)+(t.unit?" "+esc(t.unit):"")}`;body=t.explRaw?t.expl:esc(t.expl||"");
     if(!ok){const k=mistake(t,A.val),hint=k&&MISTAKE[k]&&MISTAKE[k].kid;if(hint)body=`<b>${esc(hint)}</b><br>`+body;
       const s=S.m[t.skill];if(s&&s.ok===0&&s.n>=3)body+=`<br><b>Das ist knifflig! Frag doch Mama oder Papa, wie das geht – die zeigen es dir.</b>`;}}
-  else if(t.subj==="e"){const main=t.w.en[0];head=ok?`Richtig: ${esc(main)}`:A.res==="near"?`Fast! Richtig geschrieben: ${esc(main)}`:`Richtig ist: ${esc(main)}`;body=(t.w.en.length>1?`Auch richtig: ${esc(t.w.en.slice(1).join(", "))}. `:"")+esc(t.w.note||"");body+=`<br><button class="speak" data-act="speak" data-t="${esc(main)}">🔊 Anhören</button>`;}
+  else if(t.subj==="e"){const main=t.w.en[0];head=ok?`Richtig: ${esc(main)}`:A.res==="near"?`Fast! Richtig geschrieben: ${esc(main)}`:`Richtig ist: ${esc(main)}`;const ex=t.w.ex;body=(ex?`<span lang="en" class="satz-en">${satzHTML(ex[1])}</span><br><span class="tipp">💡 ${esc(ex[2])}</span><br>`:"")+(t.w.en.length>1?`Auch richtig: ${esc(t.w.en.slice(1).join(", "))}. `:"")+(ex?"":esc(t.w.note||""));
+    body+=`<br><button class="speak" data-act="speak" data-t="${esc(main)}">🔊 Wort</button>`+(ex?` <button class="speak" data-act="speak" data-t="${esc(ex[1].replace(/\*/g,""))}">🔊 Satz</button>`:"");}
   else if(t.subj==="g"){const g=t.item,full=egSentence(g);head=ok?"Richtig!":`Richtig ist: ${esc(g.o[g.a])}`;body=`<span lang="en">${esc(full)}</span><br>${esc(g.tip)}<br><button class="speak" data-act="speak" data-t="${esc(full)}">🔊 Anhören</button>`;}
   else{const d=t.item;head=ok?"Richtig!":(d.kind==="gap"?`Richtig: ${esc(d.w)}`:d.kind==="fehler"?`Richtig wäre: ${esc(d.c)}`:`Richtig: ${esc(d.o[d.a])}`);body=esc(d.tip||"");}
   return `<div role="status">${lineHTML("ace",`<span class="who">${esc(AN())}</span><b class="big">${head}</b>${body?`<span class="ex">${body}</span>`:""}`,{html:true,res:ok?"ok":A.res==="near"?"near":"no"})}</div>`;
