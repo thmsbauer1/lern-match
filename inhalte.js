@@ -295,6 +295,35 @@ window.INHALTE = {
         ["die Schublade", ["drawer"]]
       ]
     }
+    ,{
+      /* Unit 3 nach dem Buch (Vokabelseite Unit 3, S. 47–49). Neue Seiten unten anhängen. */
+      unit: "Orange Line 1 · Unit 3",
+      woerter: [
+        // Listening, Seite 47
+        ["über (ein Thema: The song is ___ love.)", ["about"]],
+        ["das Foto", ["photo"]],
+        ["jede / jeder / jedes", ["every", "each"]],
+        // Reading, Seite 48
+        ["wollen; mögen (I ___ a dog.)", ["to want"]],
+        ["einkaufen gehen", ["to go shopping"]],
+        ["fantastisch; großartig", ["fantastic"]],
+        ["schlau; klug; schick", ["smart", "clever"]],
+        ["machen; tun (I ___ my homework.)", ["to do"]],
+        ["das Licht", ["light"]],
+        ["Hör auf! / Hört auf!", ["Stop it"]],
+        ["der Kühlschrank", ["fridge", "refrigerator"]],
+        ["der Staubsauger", ["vacuum cleaner", "hoover"]],
+        ["sauber machen; putzen", ["to clean"]],
+        // Seite 49
+        ["kalt", ["cold"]],
+        ["frieren (Ich friere.)", ["to be cold", "I'm cold", "I am cold"]],
+        ["wissen; kennen", ["to know"]],
+        ["Was ist los?; Was stimmt nicht?", ["What's wrong", "What is wrong"]],
+        ["so; also; daher (I'm ___ cold.)", ["so"]],
+        ["glücklich", ["happy"]],
+        ["das Wasser", ["water"]]
+      ]
+    }
   ],
 
   /* Englisch-Grammatik (Satz 4 im Grand-Slam-Match): [Satz mit ___, [Antworten], richtige Antwort, Tipp] */
@@ -367,22 +396,34 @@ window.INHALTE = {
     "mirror": ["Lobbi schaut in den *Spiegel* und lächelt.", "Lobbi looks in the *mirror* and smiles.", "Im Spiegel siehst du alles doppelt – darum zwei r in der Mitte: mi-rr-or."],
     "curtain": ["Hinter dem *Vorhang* versteckt sich die Katze.", "The cat is behind the *curtain*.", "Hinten wie rain (Regen): cur-tain."],
     "carpet": ["Auf dem *Teppich* liegt eine Socke.", "There's a sock on the *carpet*.", "car (Auto) + pet (Haustier): Ein Haustier fährt Auto über den Teppich!"],
-    "drawer": ["Meine Socken sind in der *Schublade*.", "My socks are in the *drawer*.", "to draw heißt auch ziehen – eine Schublade zieht man auf."]
+    "drawer": ["Meine Socken sind in der *Schublade*.", "My socks are in the *drawer*.", "to draw heißt auch ziehen – eine Schublade zieht man auf."],
+    "about": ["Wir reden *über* Tennis.", "We talk *about* tennis.", "about = über ein Thema. Über etwas drüber (oben) heißt dagegen over."],
+    "photo": ["Ich mache ein *Foto* von Lobbi.", "I take a *photo* of Lobbi.", "Im Englischen mit ph am Anfang: photo."],
+    "every": ["*Jeden* Dienstag habe ich Tennis.", "I have tennis *every* Tuesday.", "every + Einzahl: every day, every student."],
+    "to want": ["Lobbi *will* einen neuen Schläger.", "Lobbi *wants* a new racket.", "Falle! I want = ich will. Aber I will heißt ich werde."],
+    "to go shopping": ["Am Samstag *gehen* wir *einkaufen*.", "On Saturday we *go shopping*.", "shop = Laden. Beim Einkaufen doppeltes p: sho-pp-ing."],
+    "fantastic": ["Was für ein *fantastischer* Schlag!", "What a *fantastic* shot!", "Fast wie im Deutschen, aber hinten mit c: fantasti-c."],
+    "smart": ["Ace ist sehr *schlau*.", "Ace is very *smart*.", "Wie beim Smartphone – das schlaue Handy."],
+    "to do": ["Ich *mache* meine Hausaufgaben.", "I *do* my homework.", "Hausaufgaben und Sport: do (do homework, do sport). Etwas herstellen: make (make a cake)."],
+    "light": ["Mach bitte das *Licht* aus!", "Please turn off the *light*!", "Das gh spricht man nicht: „lait“ – wie bei night und right."],
+    "Stop it": ["*Hör auf*, Lobbi! Das kitzelt!", "*Stop it*, Lobbi! That tickles!", "stop kennst du vom Stoppschild."],
+    "fridge": ["Die Milch ist im *Kühlschrank*.", "The milk is in the *fridge*.", "Hinten mit dge, wie bei bridge (Brücke): fri-dge."],
+    "vacuum cleaner": ["Der *Staubsauger* ist so laut!", "The *vacuum cleaner* is so loud!", "vacuum (Vakuum) + cleaner (Sauber-Macher). Zwei u hintereinander: vac-uu-m."],
+    "to clean": ["Samstags *putze* ich mein Zimmer.", "On Saturdays I *clean* my room.", "Mit ea, gesprochen „klien“. clean = sauber, cleaner = Sauber-Macher."],
+    "cold": ["Heute ist es draußen echt *kalt*.", "It's really *cold* outside today.", "cold ↔ hot. Klingt fast wie kalt."],
+    "to be cold": ["Ich *friere*! Wo ist meine Jacke?", "*I'm cold*! Where is my jacket?", "Ich friere = I'm cold. Wörtlich: Ich bin kalt."],
+    "to know": ["Ich *weiß* die Antwort!", "I *know* the answer!", "Das k spricht man nicht: „nou“ – wie bei knee (Knie)."],
+    "What's wrong": ["*Was ist los*, Lobbi? Du siehst traurig aus.", "*What's wrong*, Lobbi? You look sad.", "wrong = falsch. Wörtlich: Was ist falsch?"],
+    "so": ["Ich bin *so* müde.", "I'm *so* tired.", "Wie im Deutschen. so heißt auch also oder deshalb."],
+    "happy": ["Ace ist *glücklich* – er ist der Sieger!", "Ace is *happy* – he is the winner!", "Happy Birthday kennst du schon! Mit Doppel-p: ha-pp-y."],
+    "water": ["Nach dem Match trinke ich viel *Wasser*.", "After the match I drink lots of *water*.", "Wasser → water: Aus ss wird t."]
   },
 
   vokabeltest: {
-    datum: "2026-11-26",
-    titel: "Unit 2, Buchseiten 238 und 239",
-    woerter: ["cousin", "or", "their", "parents", "aunt", "uncle", "grandparents", "step-", "great-", "stepmum", "stepdad",
-      "stepsister", "stepbrother", "stepmother", "great-grandparents", "partner", "son", "only child", "aren't",
-      "small", "kitchen", "garden", "living room", "attic", "bathroom", "dining room", "hall", "number", "people", "table",
-      "animal", "place", "afternoon", "at home", "can't", "must", "under", "sofa", "cupboard", "to stay", "door", "shelf",
-      "bed", "box", "snack", "there's", "packet", "thing", "trick", "picture", "her", "in front of", "next to", "behind",
-      "lamp", "bin", "chair", "window", "pillow", "mirror", "curtain", "carpet", "drawer"],
-    /* Vorrang (Thomas, 25.11.): Die Wörter von Buchseite 239 (Station 2, S. 42–43) kommen innerhalb der Testwörter zuerst. */
-    vorrang: ["afternoon", "at home", "can't", "must", "under", "sofa", "cupboard", "to stay", "door", "shelf", "bed", "box",
-      "snack", "there's", "packet", "thing", "trick", "picture", "her", "in front of", "next to", "behind",
-      "lamp", "bin", "chair", "window", "pillow", "mirror", "curtain", "carpet", "drawer"]
+    datum: "2026-12-02",
+    titel: "Unit 3, S. 47–49",
+    woerter: ["about", "photo", "every", "to want", "to go shopping", "fantastic", "smart", "to do", "light", "Stop it",
+      "fridge", "vacuum cleaner", "to clean", "cold", "to be cold", "to know", "What's wrong", "so", "happy", "water"]
   },
 
   englischGrammatik: [

@@ -652,7 +652,9 @@ function vtTasks(n){let list=vtPick(n,Infinity);
   if(list.length<n)list=list.concat(VT.ws.filter(w=>!list.includes(w)).sort((a,b)=>vtLast(a)<vtLast(b)?-1:1).slice(0,n-list.length));
   return shuffle(list).map(enTask);}
 function enTasks(n){
-  if(vtActive()){const pre=vtPick(n,vtNewLeft());
+  /* Im normalen Match höchstens gut die Hälfte Testwörter (am Tag vor dem Test 80 %), damit alte Wörter weiter drankommen.
+     Nur Testwörter gibt es unter „Testwörter üben“. */
+  if(vtActive()){const pre=vtPick(Math.ceil(n*(vtDaysLeft()<=1?.8:.6)),vtNewLeft());
     if(pre.length)return shuffle(pre.map(enTask).concat(pre.length<n?enTasksBase(n-pre.length,pre):[]));}
   return enTasksBase(n,[]);
 }
@@ -1137,7 +1139,7 @@ function vtCardHTML(){
    <p class="small" style="margin:0"><b>${ok} von ${N} Wörtern sitzen schon</b>${nw?` · ${nw} hast du noch nicht geübt`:""}. Bis zum Test kommen sie in jedem Englisch-Satz dran.</p>
    <div class="bar"><i style="width:${Math.round(ok/N*100)}%"></i></div>
    <button class="btn big" data-act="start" data-type="vt">Testwörter üben</button>
-   <button class="btn ghost" data-act="start" data-type="lobbi">🔍 Wo ist Lobbi?</button></section>`;}
+   ${VT.ws.some(w=>SC_PREP[w.en[0]]||SC_OBJ[w.en[0]])?`<button class="btn ghost" data-act="start" data-type="lobbi">🔍 Wo ist Lobbi?</button>`:""}</section>`;}
 function homeLines(){
   const t=today(),done=!!S.missions[t],n=missionCount(),nm=S.name?" "+S.name:"",h=new Date().getHours();
   if(UI.justImported){const j=UI.justImported;return ["Wir haben deine Sachen aus der Lern-Oase mitgebracht!",`${j.words} Vokabeln, deine Mathe-Stufen und ${j.days} Trainingstage. Deine ${j.balls} Datteln haben wir in Bälle umgetauscht.`];}
